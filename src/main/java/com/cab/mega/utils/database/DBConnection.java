@@ -1,4 +1,4 @@
-package com.cab.mega.Utils.database;
+package com.cab.mega.utils.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

@@ -1,19 +1,23 @@
-package com.cab.mega.Model;
+package com.cab.mega.model;
 
 public class Driver extends User{
+    private int driverId;
     private String licenseNumber;
     private int drivingExperience;
     private String availabilityStatus;
 
-    public Driver(){
-        super();
-    }
 
-    public Driver(int userId, String firstName, String lastName, String email, String phone, String password, int roleId, String licenseNumber, int drivingExperience, String availabilityStatus) {
-        super(userId, firstName, lastName, email, phone, password, roleId);
+    public Driver(int userId, int driverId, String firstName, String lastName, String nic, String email, String password, String phone, String gender, int roleId, String licenseNumber, int drivingExperience, String availabilityStatus) {
+        super(userId, firstName, lastName,nic, email,password, phone, gender, roleId);
+        this.driverId = driverId;
         this.licenseNumber = licenseNumber;
         this.drivingExperience = drivingExperience;
         this.availabilityStatus = availabilityStatus;
+    }
+
+    public Driver(String licenseNumber, int drivingExperience) {
+        this.licenseNumber = licenseNumber;
+        this.drivingExperience = drivingExperience;
     }
 
     public String getLicenseNumber() {
