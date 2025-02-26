@@ -174,8 +174,10 @@
                 success: function(response) {
                   console.log(response);
                   if(response.isSuccess){
-                    $("#loginForm")[0].reset();
-                    window.location = '<%= request.getContextPath() %>'+response.message;
+
+                    setTimeout(() => {
+                        window.location = '<%= request.getContextPath() %>'+response.message;
+                    }, 2000);
                   }else{
                      showError(response.message);
                   }
