@@ -138,9 +138,9 @@
           </ul>
         </div>
         <div class="footer__col">
-          <h4>About RentalX</h4>
+          <h4>About MegaCity</h4>
           <ul class="footer__links">
-            <li><a href="#">Why RentalX</a></li>
+            <li><a href="#">Why MegaCity</a></li>
             <li><a href="#">Our Story</a></li>
             <li><a href="#">Investors</a></li>
             <li><a href="#">Press Centers</a></li>

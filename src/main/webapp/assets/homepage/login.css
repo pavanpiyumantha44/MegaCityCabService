@@ -542,6 +542,7 @@ nav {
   .login_container {
     display: flex;
     width: 100%;
+    column-gap:5rem;
     justify-content:center;
     overflow: hidden;
   }
@@ -570,6 +571,7 @@ nav {
     width: 100%;
     justify-content: center;
     gap: 2rem;
+    column-gap:10rem;
     overflow: hidden;
   }
   .form{
@@ -581,6 +583,9 @@ nav {
     padding: 10px;
     border-radius: 10px;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+  }
+  .login_image{
+    width:30%;
   }
   .nav__header {
     flex: 1;

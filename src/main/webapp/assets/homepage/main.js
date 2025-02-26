@@ -46,6 +46,11 @@ ScrollReveal().reveal(".service__image img", {
   ...scrollRevealOption,
   origin: "left",
 });
+
+ScrollReveal().reveal(".login_image img", {
+  ...scrollRevealOption,
+  origin: "left",
+});
 ScrollReveal().reveal(".service__content .section__subheader", {
   ...scrollRevealOption,
   delay: 500,
