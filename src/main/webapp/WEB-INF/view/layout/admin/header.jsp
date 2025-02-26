@@ -78,6 +78,21 @@
                         </ul>
                     </li>
                     <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#vehicles" data-bs-toggle="collapse"
+                            aria-expanded="false">
+                            <i class="fa-solid fa-car-side"></i>
+                            Vehicles
+                        </a>
+                        <ul id="vehicles" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+                            <li class="sidebar-item">
+                                <a href="${pageContext.request.contextPath}/admin?action=vehicles/list" class="sidebar-link">Available Vehicles</a>
+                            </li>
+                            <li class="sidebar-item">
+                                <a href="${pageContext.request.contextPath}/admin?action=vehicles/add" class="sidebar-link">Add Vehicle</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#drivers" data-bs-toggle="collapse"
                             aria-expanded="false">
                             <i class="fa-solid fa-user-tie"></i>

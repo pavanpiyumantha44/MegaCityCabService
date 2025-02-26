@@ -10,7 +10,7 @@
 </nav>
 <form id="newDriverForm">
     <input type="hidden" name="action" value="add" />
-    <input type="hidden" name="user-type" value="customer" />
+    <input type="hidden" name="user-type" value="driver" />
     <input type="hidden" name="role_id" value="4" />
 
     <div class="mt-5">
