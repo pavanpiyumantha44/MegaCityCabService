@@ -153,7 +153,7 @@ public class UserController extends HttpServlet {
         }catch (Exception e){
             e.printStackTrace();
         }finally {
-            RequestDispatcher requestDispatcher = req.getRequestDispatcher("/dashboard2.jsp?page=customers");
+            RequestDispatcher requestDispatcher = req.getRequestDispatcher("/dashboard.jsp?page=customers");
             requestDispatcher.forward(req,res);
         }
     }
@@ -169,6 +169,6 @@ public class UserController extends HttpServlet {
             return;
         }
 
-        req.getRequestDispatcher("dashboard2.jsp?page=customers").forward(req, res);
+        req.getRequestDispatcher("dashboard.jsp?page=customers").forward(req, res);
     }
 }

@@ -2,7 +2,9 @@ package com.cab.mega.controller;
 
 import com.cab.mega.Service.AuthService;
 import com.cab.mega.Service.LoginService;
+import com.cab.mega.Service.UserService;
 import com.cab.mega.model.CommonResponseModel;
+import com.cab.mega.model.Customer;
 import com.cab.mega.model.LoginModel;
 import com.cab.mega.model.User;
 import com.google.gson.Gson;
@@ -23,9 +25,11 @@ import static com.cab.mega.utils.datamapper.DataMapper.getDataMapper;
 @WebServlet("/auth")
 public class AuthController extends HttpServlet {
     AuthService authService;
+    UserService userService;
 
     public void init() throws ServletException {
         authService = AuthService.getAuthService();
+        userService = UserService.getInstance();
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
@@ -119,6 +123,33 @@ public class AuthController extends HttpServlet {
         }
     }
     public void register(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        try {
+
+            String firstName = req.getParameter("first_name");
+            String lastName = req.getParameter("last_name");
+            String nic = req.getParameter("nic");
+            String email = req.getParameter("email");
+            String password = req.getParameter("password");
+            String phone = req.getParameter("phone");
+            String gender = req.getParameter("gender");
+            String address = req.getParameter("address");
+            String membershipStatus = "regular";
+            System.out.println(gender);
+            User user = new User(firstName,lastName,nic,email,password,phone,gender,4);
+            Customer customer = new Customer(address,membershipStatus);
+            try {
+                CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
+                Customer customerData = new Gson().fromJson(getDataMapper().mapData(req), Customer.class);
+                response = userService.addCustomer(user,customer);
+                res.setContentType("application/json");
+                res.getWriter().write(new Gson().toJson(response));
+            }catch (Exception e){
+                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+                e.printStackTrace();
+            }
+        }catch (NullPointerException e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
 
     }
     public void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {

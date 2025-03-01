@@ -4,9 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="./assets/homepage/login.css" />
+    <link rel="stylesheet" href="./assets/homepage/signup.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <title>MegaCity Cabs - Sign In</title>
+    <title>MegaCity Cabs - Sign Up</title>
     <style>
         .hidden{
             display:none;
@@ -45,8 +45,8 @@
           </li>
         </ul>
         <div class="nav__btns">
-         <button class="btn btn__primary"><a href="signup.jsp" style="text-decoration:none;">Sign Up</a></button>
-         <button class="btn btn__secondary"><a href="login.jsp" style="color:white; text-decoration:none;">Sign In</a></button>
+          <button class="btn btn__primary"><a href="signup.jsp" style="text-decoration:none;">Sign Up</a></button>
+          <button class="btn btn__secondary"><a href="login.jsp" style="color:white; text-decoration:none;">Sign In</a></button>
         </div>
       </nav>
     </header>
@@ -55,21 +55,63 @@
         <img src="./assets/images/login.png" alt="loginImg"/>
       </div>
       <div class="form">
-        <form class="signin-form" id="loginForm">
-          <h2>Sign In</h2>
-          <div class="errMessage hidden" id="errorMsg"></div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" placeholder="Enter your password" minlength="6" required>
-          </div>
-          <button type="submit" class="signin-button">Sign In</button>
-          <p class="signup-link">Don't have an account? <a href="signup.jsp">Sign Up</a></p>
-        </form>
-      </div>
+              <form class="signup-form" id="signupForm">
+                <h2>Sign Up</h2>
+                <div class="errMessage hidden" id="errorMsg"></div>
+                <!-- Grid Layout for Form Fields -->
+                <div class="form-grid">
+                  <!-- Row 1: First Name and Last Name -->
+                  <div class="form-group">
+                    <label for="first_name">First Name</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="last_name">Last Name</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                  </div>
+
+                  <div class="form-group">
+                      <label for="nic">NIC</label>
+                      <input type="text" id="nic" name="nic" placeholder="Enter your NIC" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="gender">Gender</label>
+                      <select id="gender" name="gender" required>
+                        <option value="" disabled selected>Select your gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Female</option>
+                      </select>
+                    </div>
+                  <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" minlength="6" required>
+                  </div>
+                  <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" id="c_password" name="c_password" placeholder="Confirm your password" minlength="6" required>
+                  </div>
+                  <div class="form-group full-width">
+                    <label for="address">Address</label>
+                    <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                  </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="signup-button">Sign Up</button>
+
+                <!-- Login Link -->
+                <p class="login-link">Already have an account? <a href="#">Sign In</a></p>
+              </form>
+            </div>
     </section>
     <footer class="footer">
       <div class="section__container footer__container">
@@ -151,11 +193,40 @@
             showError("Please enter a valid email address");
             isValid = false;
           }
+        var nic = $("#nic").val();
+        var nicPattern = /^([0-9]{9}[xXvV]|[0-9]{12})$/;
+        if (nic === "") {
+          showError("Enter NIC");
+          isValid = false;
+        } else if (!nicPattern.test(nic)) {
+          showError("Invalid NIC");
+          isValid = false;
+        }
 
+          var firstName = $("#first_name").val();
+          if(firstName === ""){
+            showError("Enter First Name");
+            isValid = false;
+          }
+          var lastName = $("#last_name").val();
+          if(lastName === ""){
+            showError("Enter Last Name");
+            isValid = false;
+          }
+          var address = $("#address").val();
+          if(address === ""){
+            showError("Enter Address");
+            isValid = false;
+          }
           // Validate password
-          var lastName = $("#password").val();
-          if(lastName === "") {
+          var password = $("#password").val();
+          if(password === "") {
             showError("Password is Required!");
+            isValid=false;
+          }
+          var cPassword = $('#c_password').val();
+          if(password !== cPassword){
+            showError("Password and Confirm Password are not matching");
             isValid=false;
           }
 
@@ -169,14 +240,14 @@
           if(isValid){
               $.ajax({
                 type: "POST",
-                url: "auth?action=login",
+                url: "auth?action=register",
                 data: $(this).serialize(),
                 success: function(response) {
                   console.log(response);
                   if(response.isSuccess){
 
                     setTimeout(() => {
-                        window.location = '<%= request.getContextPath() %>'+response.message;
+                        window.location = '<%= request.getContextPath() %>/login.jsp';
                     }, 2000);
                   }else{
                      showError(response.message);

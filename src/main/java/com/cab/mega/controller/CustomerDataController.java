@@ -1,13 +1,10 @@
 package com.cab.mega.controller;
 
-import com.cab.mega.Service.BookingService;
 import com.cab.mega.Service.UserService;
 import com.cab.mega.Service.VehicleService;
 import com.cab.mega.model.*;
 import com.google.gson.Gson;
-import com.google.protobuf.TextFormat;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -16,32 +13,22 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.cab.mega.utils.datamapper.DataMapper.getDataMapper;
 
-@WebServlet("/admin/*")
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 2, // 2MB
-        maxFileSize = 1024 * 1024 * 10,      // 10MB
-        maxRequestSize = 1024 * 1024 * 50    // 50MB
-)
-public class AdminDataController extends HttpServlet {
+@WebServlet("/customer/*")
+
+public class CustomerDataController extends HttpServlet {
     UserService userService;
     VehicleService vehicleService;
-    BookingService bookingService;
 
     public void init() throws ServletException {
         userService = UserService.getInstance();
         vehicleService = VehicleService.getInstance();
-        bookingService = BookingService.getInstance();
     }
 
     @Override
@@ -55,8 +42,6 @@ public class AdminDataController extends HttpServlet {
             showDashboard(req,res);
         }else if (action.equals("bookings")){
             showBookings(req,res);
-        }else if (action.equals("bookings/addRental")){
-            showAddRentalBooking(req,res);
         }else if(action.equals("customers/list")){
             showCustomers(req,res);
         }else if(action.equals("customers/add")){
@@ -86,8 +71,6 @@ public class AdminDataController extends HttpServlet {
             addCustomers(req,res);
         }else if(action.equals("customers/delete")){
             deleteUser(req,res);
-        }else if(action.equals("bookings/add")){
-            addBooking(req,res);
         }else if(action.equals("drivers/add")){
             addDrivers(req,res);
         }else if(action.equals("drivers/delete")){
@@ -107,11 +90,11 @@ public class AdminDataController extends HttpServlet {
         try{
             HttpSession session = req.getSession();
             int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 1) {
+            if (roleId!= 4) {
                 res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
                 return;
             }
-            req.getRequestDispatcher("/WEB-INF/view/user/admin/dashboard.jsp").forward(req, res);
+            req.getRequestDispatcher("/WEB-INF/view/user/customer/custDashboard.jsp").forward(req, res);
         }catch (NullPointerException e){
             res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
         }
@@ -129,23 +112,6 @@ public class AdminDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
         }
 
-    }
-    private void showAddRentalBooking(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        try{
-            HttpSession session = req.getSession();
-            int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 1) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
-                return;
-            }
-            List<Customer> customers = userService.getAllCustomers();
-            List<Vehicle> vehicles = vehicleService.getAllAvailableVehicles();
-            req.setAttribute("customers",customers);
-            req.setAttribute("vehicles",vehicles);
-            req.getRequestDispatcher("/WEB-INF/view/user/admin/booking/a_addRentalBooking.jsp").forward(req, res);
-        }catch (NullPointerException | SQLException e){
-            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-        }
     }
     private void showCustomers(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         try {
@@ -404,48 +370,6 @@ public class AdminDataController extends HttpServlet {
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(response));
             }catch (Exception e){
-                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-                e.printStackTrace();
-            }
-        }catch (NullPointerException e){
-            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-        }
-    }
-    private void addBooking(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        try {
-            HttpSession session = req.getSession();
-            int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 1) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
-                return;
-            }
-            String userId = req.getParameter("user_id");
-            String vehicleId = req.getParameter("vehicle_id");
-
-            String startDate = req.getParameter("start_date");
-            String endDate = req.getParameter("end_date");
-            int noOfDays = Integer.parseInt(req.getParameter("no_of_days"));
-            String pricePerDay = req.getParameter("price_per_day");
-            String isLicenseVerified = req.getParameter("is_license_verified");
-            String isUtilityBillVerified = req.getParameter("is_utility_bill_verified");
-            String startMeterReading = req.getParameter("current_meter_reading");
-            int endMeterReading = 0;
-            double totalPrice = Double.parseDouble(req.getParameter("total_price"));
-            String bookingStatus = "pending";
-
-            //System.out.println(userId+" "+vehicleId+" "+startDate+" "+" "+endDate+" "+noOfDays+" "+pricePerDay+" "+isLicenseVerified+" "+isUtilityBillVerified+" "+startMeterReading+" "+endMeterReading+" "+totalPrice);
-
-            Booking booking = new Booking(Integer.parseInt(userId),Integer.parseInt(vehicleId),startDate,endDate,noOfDays,isLicenseVerified,isUtilityBillVerified,Integer.parseInt(startMeterReading),endMeterReading,totalPrice,bookingStatus);
-
-            try {
-                CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
-                Booking bookingData = new Gson().fromJson(getDataMapper().mapData(req), Booking.class);
-                response = bookingService.addBooking(booking);
-                res.setContentType("application/json");
-                res.getWriter().write(new Gson().toJson(response));
-            } catch (TextFormat.ParseException e){
-                e.printStackTrace();
-            } catch (Exception e){
                 res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
                 e.printStackTrace();
             }

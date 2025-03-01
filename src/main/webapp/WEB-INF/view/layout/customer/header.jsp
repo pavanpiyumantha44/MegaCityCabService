@@ -58,7 +58,7 @@
                                 <a href="${pageContext.request.contextPath}/admin?action=bookings" class="sidebar-link">Available Bookings</a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="${pageContext.request.contextPath}/admin?action=bookings/addRental" class="sidebar-link">Create Booking</a>
+                                <a href="#" class="sidebar-link">Create Booking</a>
                             </li>
                         </ul>
                     </li>

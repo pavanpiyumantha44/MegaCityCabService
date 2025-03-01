@@ -35,7 +35,7 @@
           </li>
         </ul>
         <div class="nav__btns">
-          <button class="btn btn__primary">Sign Up</button>
+          <button class="btn btn__primary"><a href="signup.jsp" style="text-decoration:none;">Sign Up</a></button>
           <button class="btn btn__secondary"><a href="login.jsp" style="color:white; text-decoration:none;">Sign In</a></button>
         </div>
       </nav>

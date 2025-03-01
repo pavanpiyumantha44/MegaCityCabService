@@ -161,18 +161,6 @@ nav {
   overflow: hidden;
 }
 
-/* .header__container::before {
-  position: absolute;
-  content: "";
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 50%;
-  background: var(--gradient);
-  border-radius: 1rem 1rem 0.5rem 0.5rem;
-  z-index: -1;
-} */
-
 .header__content h1 {
   position: relative;
   isolation: isolate;
@@ -398,45 +386,53 @@ nav {
   display: flex;
   width: 100%;
   justify-content: space-between;
-  align-items:center;
   overflow: hidden;
 }
-.form{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 25rem;
-  padding: 10px;
+.form {
+  background-color: #fff;
+  padding: 20px;
   border-radius: 10px;
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-}
-.login_image{
-  width: 40%;
-}
-.signin-form {
   width: 100%;
-  max-width: 300px;
+  max-width: 500px;
+  margin: 20px;
 }
 
-.signin-form h2 {
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.signup-form h2 {
   margin-bottom: 20px;
   font-size: 24px;
   color: #333;
+  text-align: center;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns by default */
+  gap: 15px; /* Space between grid items */
+}
+.form-group.full-width {
+  grid-column: span 2; /* Span both columns */
 }
 
 .form-group {
-  margin-bottom: 25px;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group label {
-  display: block;
   margin-bottom: 5px;
   font-size: 14px;
   color: #555;
 }
 
-.form-group input {
-  width: 100%;
+.form-group input,
+.form-group select {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -445,12 +441,13 @@ nav {
   transition: border-color 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus {
   border-color: #007bff;
 }
 
-.signin-button {
-  width: 100%;
+.signup-button {
+  grid-column: span 2; /* Button spans both columns by default */
   padding: 10px;
   background-color: #474fa0;
   color: #fff;
@@ -459,26 +456,39 @@ nav {
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-top: 10px;
 }
 
-.signin-button:hover {
+.signup-button:hover {
   background-color: #0056b3;
 }
 
-.signup-link {
-  margin-top: 10px;
+.login-link {
+  grid-column: span 2; /* Link spans both columns by default */
+  text-align: center;
   font-size: 14px;
   color: #555;
-  text-align: center;
+  margin-top: 10px;
 }
 
-.signup-link a {
+.login-link a {
   color: #007bff;
   text-decoration: none;
 }
 
-.signup-link a:hover {
+.login-link a:hover {
   text-decoration: underline;
+}
+
+.errMessage {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.hidden {
+  display: none;
 }
 @media (width > 540px) {
   .steps__grid {
@@ -492,20 +502,26 @@ nav {
     display: flex;
     width: 100%;
     justify-content: center;
-    align-items:center;
     gap: 2rem;
     overflow: hidden;
   }
   .form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 25rem;
-    padding-top: 20px;
-    padding: 10px;
+    background-color: #fff;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
   }
+  .form-grid {
+      grid-template-columns: 1fr; /* Switch to one column on smaller screens */
+    }
+
+    .signup-button,
+    .login-link {
+      grid-column: span 1; /* Reset span for mobile */
+    }
 }
 @media (width<768px) {
   .login_section_container {
@@ -523,12 +539,21 @@ nav {
     display: flex;
     width: 100%;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     overflow: hidden;
   }
+  .form-grid {
+      grid-template-columns: 1fr; /* Switch to one column on smaller screens */
+    }
+
+    .signup-button,
+    .login-link {
+      grid-column: span 1; /* Reset span for mobile */
+    }
   .login_image{
     display: none;
    }
+
 }
 @media (width<540px) {
   .login_section_container {
@@ -547,12 +572,20 @@ nav {
     width: 100%;
     column-gap:5rem;
     justify-content:center;
-    align-items:center;
+    align-items: center;
     overflow: hidden;
   }
   .login_image{
     display: none;
    }
+   .form-grid {
+       grid-template-columns: 1fr; /* Switch to one column on smaller screens */
+     }
+
+     .signup-button,
+     .login-link {
+       grid-column: span 1; /* Reset span for mobile */
+     }
 }
 @media (width > 768px) {
   header::before {
@@ -574,21 +607,28 @@ nav {
     display: flex;
     width: 100%;
     justify-content: center;
-    align-items:center;
+    align-items: center;
     gap: 2rem;
     column-gap:10rem;
     overflow: hidden;
   }
   .form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 25rem;
-    padding-top: 20px;
-    padding: 10px;
+    background-color: #fff;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
   }
+  .form-grid {
+      grid-template-columns: 1fr; /* Switch to one column on smaller screens */
+    }
+
+    .signup-button,
+    .login-link {
+      grid-column: span 1; /* Reset span for mobile */
+    }
   .login_image{
     width:30%;
   }

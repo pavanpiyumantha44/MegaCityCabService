@@ -21,7 +21,7 @@ public class VehicleService {
     }
     public static VehicleService getInstance() {
         if (vehicleService == null) {
-            synchronized (LoginService.class) {
+            synchronized (VehicleService.class) {
                 if (vehicleService == null) {
                     vehicleService = new VehicleService();
                 }
@@ -82,5 +82,8 @@ public class VehicleService {
     }
     public List<Vehicle> getAllVehicles() {
         return vehicleDao.getVehicles();
+    }
+    public List<Vehicle> getAllAvailableVehicles() {
+        return vehicleDao.getAvailableVehicles();
     }
 }

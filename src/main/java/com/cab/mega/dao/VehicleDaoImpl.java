@@ -94,6 +94,39 @@ public class VehicleDaoImpl implements VehicleDao{
     }
 
     @Override
+    public List<Vehicle> getAvailableVehicles() {
+        Connection connection = DBConnectionFactory.getConnection();
+        List<Vehicle> vehicles = new ArrayList<>();
+        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id where v.status='available'";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                vehicles.add(new Vehicle(
+                        resultSet.getInt("vehicle_id"),
+                        resultSet.getString("vin"),
+                        resultSet.getString("model"),
+                        resultSet.getString("make"),
+                        resultSet.getInt("year"),
+                        resultSet.getString("registration_number"),
+                        resultSet.getString("vehicle_type"),
+                        resultSet.getInt("no_of_seats"),
+                        resultSet.getInt("current_meter_reading"),
+                        resultSet.getDouble("price_per_day"),
+                        resultSet.getDouble("price_per_km"),
+                        resultSet.getDouble("price_per_extra_km"),
+                        resultSet.getDouble("price_per_extra_hour"),
+                        resultSet.getString("status"),
+                        resultSet.getString("image_file_path")
+                ));
+            }
+            return vehicles;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public List<String> getVehicleImages(int vehicleId) {
         Connection connection = DBConnectionFactory.getConnection();
         List<String> imagePaths = new ArrayList<>();
