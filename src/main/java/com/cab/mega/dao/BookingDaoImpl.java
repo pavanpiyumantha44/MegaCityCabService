@@ -6,28 +6,37 @@ import com.cab.mega.utils.database.DBConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookingDaoImpl implements BookingDao{
     @Override
-    public boolean addBooking(Booking booking) {
+    public boolean createBooking(Booking booking) {
         Connection connection = DBConnectionFactory.getConnection();
-        String query = "INSERT INTO booking (user_id, vehicle_id, start_date, end_date, no_of_days,is_license_verified,is_utility_bill_verified, start_meter_reading, end_meter_reading, total_price, booking_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO booking (customer_id,driver_id, vehicle_id, pickup_location,destination, pickup_lat, pickup_lon,destination_lat,destination_lon, special_note, start_meter_reading, end_meter_reading, distance_km, base_fare, price_per_km, waiting_price, total_fare,discount_price,pickup_dttm,dropoff_dttm, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1,booking.getUserId());
-            statement.setInt(2,booking.getVehicleId());
-            statement.setString(3,booking.getStartDate());
-            statement.setString(4,booking.getEndDate());
-            statement.setInt(5,booking.getNoOfDays());
-            statement.setString(6,booking.getIsLicenseVerified());
-            statement.setString(7,booking.getIsUtilityBillVerified());
-            statement.setInt(8,booking.getStartMeterReading());
-            statement.setInt(9,booking.getEndMeterReading());
-            statement.setDouble(10,booking.getTotalPrice());
-            statement.setString(11,booking.getBookingStatus());
+            statement.setInt(1,booking.getCustomerId());
+            statement.setInt(2,booking.getDriverId());
+            statement.setInt(3,booking.getVehicleId());
+            statement.setString(4,booking.getPickupLocation());
+            statement.setString(5,booking.getDestination());
+            statement.setString(6,booking.getPickupLat());
+            statement.setString(7,booking.getPickupLon());
+            statement.setString(8,booking.getDestinationLat());
+            statement.setString(9,booking.getDestinationLon());
+            statement.setString(10,booking.getSpecialNote());
+            statement.setDouble(11,booking.getStartMeterReading());
+            statement.setDouble(12,booking.getEndMeterReading());
+            statement.setDouble(13,booking.getDistanceKm());
+            statement.setDouble(14,booking.getBaseFare());
+            statement.setDouble(15,booking.getPricePerKm());
+            statement.setDouble(16,booking.getWaitingPrice());
+            statement.setDouble(17,booking.getTotalPrice());
+            statement.setDouble(18,booking.getDiscountPrice());
+            statement.setString(19,booking.getPickupDateTime());
+            statement.setString(20,booking.getStatus());
+            statement.setString(21,booking.getPaymentStatus());
             statement.executeUpdate();
             return true;
         }catch (SQLException e) {

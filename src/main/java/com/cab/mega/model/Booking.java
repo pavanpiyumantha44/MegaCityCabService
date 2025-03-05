@@ -4,50 +4,85 @@ import java.util.Date;
 
 public class Booking {
     private int bookingId;
-    private int userId;
+    private int customerId;
+    private int driverId;
     private int vehicleId;
-    private String startDate;
-    private String endDate;
-    private int noOfDays;
-    private String isLicenseVerified;
-    private String isUtilityBillVerified;
-    private int startMeterReading;
-    private int endMeterReading;
+    private String pickupLocation;
+    private String destination;
+    private String pickupLat;
+    private String pickupLon;
+    private String destinationLat;
+    private String destinationLon;
+    private String specialNote;
+    private double startMeterReading;
+    private double endMeterReading;
+    private double distanceKm;
+    private double baseFare;
+    private double pricePerKm;
+    private double waitingPrice;
     private double totalPrice;
-    private String bookingStatus;
+    private double discountPrice;
+    private double cancellationPrice;
+    private String bookingDateTime;
+    private String pickupDateTime;
+    private String dropOffDateTime;
+    private String status;
+    private String paymentStatus;
+    private String paymentMethod;
+    private String cancelledBy;
 
-
-    // Default constructor
-    public Booking() {
-    }
-
-    public Booking(int bookingId, int userId, int vehicleId, String startDate, String endDate, int noOfDays, String isLicenseVerified, String isUtilityBillVerified, int startMeterReading, int endMeterReading, double totalPrice, String bookingStatus) {
+    public Booking(int bookingId, int customerId, int driverId, int vehicleId, String pickupLocation, String destination, String pickupLat, String pickupLon, String destinationLat, String destinationLon, String specialNote, double startMeterReading, double endMeterReading, double distanceKm, double baseFare, double pricePerKm, double waitingPrice, double totalPrice, double discountPrice, double cancellationPrice, String bookingDateTime, String pickupDateTime, String dropOffDateTime, String status, String paymentStatus, String paymentMethod, String cancelledBy) {
         this.bookingId = bookingId;
-        this.userId = userId;
+        this.customerId = customerId;
+        this.driverId = driverId;
         this.vehicleId = vehicleId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.noOfDays = noOfDays;
-        this.isLicenseVerified = isLicenseVerified;
-        this.isUtilityBillVerified = isUtilityBillVerified;
+        this.pickupLocation = pickupLocation;
+        this.destination = destination;
+        this.pickupLat = pickupLat;
+        this.pickupLon = pickupLon;
+        this.destinationLat = destinationLat;
+        this.destinationLon = destinationLon;
+        this.specialNote = specialNote;
         this.startMeterReading = startMeterReading;
         this.endMeterReading = endMeterReading;
+        this.distanceKm = distanceKm;
+        this.baseFare = baseFare;
+        this.pricePerKm = pricePerKm;
+        this.waitingPrice = waitingPrice;
         this.totalPrice = totalPrice;
-        this.bookingStatus = bookingStatus;
+        this.discountPrice = discountPrice;
+        this.cancellationPrice = cancellationPrice;
+        this.bookingDateTime = bookingDateTime;
+        this.pickupDateTime = pickupDateTime;
+        this.dropOffDateTime = dropOffDateTime;
+        this.status = status;
+        this.paymentStatus = paymentStatus;
+        this.paymentMethod = paymentMethod;
+        this.cancelledBy = cancelledBy;
     }
 
-    public Booking(int userId, int vehicleId, String startDate, String endDate, int noOfDays, String isLicenseVerified, String isUtilityBillVerified, int startMeterReading, int endMeterReading, double totalPrice, String bookingStatus) {
-        this.userId = userId;
+    public Booking(int customerId, int driverId, int vehicleId, String pickupLocation, String destination, String pickupLat, String pickupLon, String destinationLat, String destinationLon, String specialNote, double startMeterReading, double endMeterReading, double distanceKm, double baseFare, double pricePerKm, double waitingPrice, double totalPrice, double discountPrice, String pickupDateTime, String status, String paymentStatus) {
+        this.customerId = customerId;
+        this.driverId = driverId;
         this.vehicleId = vehicleId;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.noOfDays = noOfDays;
-        this.isLicenseVerified = isLicenseVerified;
-        this.isUtilityBillVerified = isUtilityBillVerified;
+        this.pickupLocation = pickupLocation;
+        this.destination = destination;
+        this.pickupLat = pickupLat;
+        this.pickupLon = pickupLon;
+        this.destinationLat = destinationLat;
+        this.destinationLon = destinationLon;
+        this.specialNote = specialNote;
         this.startMeterReading = startMeterReading;
         this.endMeterReading = endMeterReading;
+        this.distanceKm = distanceKm;
+        this.baseFare = baseFare;
+        this.pricePerKm = pricePerKm;
+        this.waitingPrice = waitingPrice;
         this.totalPrice = totalPrice;
-        this.bookingStatus = bookingStatus;
+        this.discountPrice = discountPrice;
+        this.pickupDateTime = pickupDateTime;
+        this.status = status;
+        this.paymentStatus = paymentStatus;
     }
 
     public int getBookingId() {
@@ -58,12 +93,20 @@ public class Booking {
         this.bookingId = bookingId;
     }
 
-    public int getUserId() {
-        return userId;
+    public int getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(int driverId) {
+        this.driverId = driverId;
     }
 
     public int getVehicleId() {
@@ -74,60 +117,108 @@ public class Booking {
         this.vehicleId = vehicleId;
     }
 
-    public String getStartDate() {
-        return startDate;
+    public String getPickupLocation() {
+        return pickupLocation;
     }
 
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
+    public void setPickupLocation(String pickupLocation) {
+        this.pickupLocation = pickupLocation;
     }
 
-    public String getEndDate() {
-        return endDate;
+    public String getDestination() {
+        return destination;
     }
 
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
-    public int getNoOfDays() {
-        return noOfDays;
+    public String getPickupLat() {
+        return pickupLat;
     }
 
-    public void setNoOfDays(int noOfDays) {
-        this.noOfDays = noOfDays;
+    public void setPickupLat(String pickupLat) {
+        this.pickupLat = pickupLat;
     }
 
-    public String getIsLicenseVerified() {
-        return isLicenseVerified;
+    public String getPickupLon() {
+        return pickupLon;
     }
 
-    public void setIsLicenseVerified(String isLicenseVerified) {
-        this.isLicenseVerified = isLicenseVerified;
+    public void setPickupLon(String pickupLon) {
+        this.pickupLon = pickupLon;
     }
 
-    public String getIsUtilityBillVerified() {
-        return isUtilityBillVerified;
+    public String getDestinationLat() {
+        return destinationLat;
     }
 
-    public void setIsUtilityBillVerified(String isUtilityBillVerified) {
-        this.isUtilityBillVerified = isUtilityBillVerified;
+    public void setDestinationLat(String destinationLat) {
+        this.destinationLat = destinationLat;
     }
 
-    public int getStartMeterReading() {
+    public String getDestinationLon() {
+        return destinationLon;
+    }
+
+    public void setDestinationLon(String destinationLon) {
+        this.destinationLon = destinationLon;
+    }
+
+    public String getSpecialNote() {
+        return specialNote;
+    }
+
+    public void setSpecialNote(String specialNote) {
+        this.specialNote = specialNote;
+    }
+
+    public double getStartMeterReading() {
         return startMeterReading;
     }
 
-    public void setStartMeterReading(int startMeterReading) {
+    public void setStartMeterReading(double startMeterReading) {
         this.startMeterReading = startMeterReading;
     }
 
-    public int getEndMeterReading() {
+    public double getEndMeterReading() {
         return endMeterReading;
     }
 
-    public void setEndMeterReading(int endMeterReading) {
+    public void setEndMeterReading(double endMeterReading) {
         this.endMeterReading = endMeterReading;
+    }
+
+    public double getDistanceKm() {
+        return distanceKm;
+    }
+
+    public void setDistanceKm(double distanceKm) {
+        this.distanceKm = distanceKm;
+    }
+
+    public double getBaseFare() {
+        return baseFare;
+    }
+
+    public void setBaseFare(double baseFare) {
+        this.baseFare = baseFare;
+    }
+
+    public double getPricePerKm() {
+        return pricePerKm;
+    }
+
+    public void setPricePerKm(double pricePerKm) {
+        this.pricePerKm = pricePerKm;
+    }
+
+    public double getWaitingPrice() {
+        return waitingPrice;
+    }
+
+    public void setWaitingPrice(double waitingPrice) {
+        this.waitingPrice = waitingPrice;
     }
 
     public double getTotalPrice() {
@@ -138,11 +229,75 @@ public class Booking {
         this.totalPrice = totalPrice;
     }
 
-    public String getBookingStatus() {
-        return bookingStatus;
+    public double getDiscountPrice() {
+        return discountPrice;
     }
 
-    public void setBookingStatus(String bookingStatus) {
-        this.bookingStatus = bookingStatus;
+    public void setDiscountPrice(double discountPrice) {
+        this.discountPrice = discountPrice;
+    }
+
+    public double getCancellationPrice() {
+        return cancellationPrice;
+    }
+
+    public void setCancellationPrice(double cancellationPrice) {
+        this.cancellationPrice = cancellationPrice;
+    }
+
+    public String getBookingDateTime() {
+        return bookingDateTime;
+    }
+
+    public void setBookingDateTime(String bookingDateTime) {
+        this.bookingDateTime = bookingDateTime;
+    }
+
+    public String getPickupDateTime() {
+        return pickupDateTime;
+    }
+
+    public void setPickupDateTime(String pickupDateTime) {
+        this.pickupDateTime = pickupDateTime;
+    }
+
+    public String getDropOffDateTime() {
+        return dropOffDateTime;
+    }
+
+    public void setDropOffDateTime(String dropOffDateTime) {
+        this.dropOffDateTime = dropOffDateTime;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getCancelledBy() {
+        return cancelledBy;
+    }
+
+    public void setCancelledBy(String cancelledBy) {
+        this.cancelledBy = cancelledBy;
     }
 }

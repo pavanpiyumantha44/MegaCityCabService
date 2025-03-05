@@ -64,7 +64,7 @@ public class VehicleDaoImpl implements VehicleDao{
     public List<Vehicle> getVehicles() {
         Connection connection = DBConnectionFactory.getConnection();
         List<Vehicle> vehicles = new ArrayList<>();
-        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id";
+        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading,v.base_fare, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id";
         try{
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
@@ -79,6 +79,7 @@ public class VehicleDaoImpl implements VehicleDao{
                         resultSet.getString("vehicle_type"),
                         resultSet.getInt("no_of_seats"),
                         resultSet.getInt("current_meter_reading"),
+                        resultSet.getDouble("base_fare"),
                         resultSet.getDouble("price_per_day"),
                         resultSet.getDouble("price_per_km"),
                         resultSet.getDouble("price_per_extra_km"),
@@ -97,7 +98,7 @@ public class VehicleDaoImpl implements VehicleDao{
     public List<Vehicle> getAvailableVehicles() {
         Connection connection = DBConnectionFactory.getConnection();
         List<Vehicle> vehicles = new ArrayList<>();
-        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id where v.status='available'";
+        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading, v.base_fare, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id where v.status='available'";
         try{
             PreparedStatement statement = connection.prepareStatement(query);
             ResultSet resultSet = statement.executeQuery();
@@ -112,6 +113,7 @@ public class VehicleDaoImpl implements VehicleDao{
                         resultSet.getString("vehicle_type"),
                         resultSet.getInt("no_of_seats"),
                         resultSet.getInt("current_meter_reading"),
+                        resultSet.getDouble("base_fare"),
                         resultSet.getDouble("price_per_day"),
                         resultSet.getDouble("price_per_km"),
                         resultSet.getDouble("price_per_extra_km"),

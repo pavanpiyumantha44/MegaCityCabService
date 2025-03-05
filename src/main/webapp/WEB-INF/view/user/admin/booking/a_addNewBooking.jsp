@@ -23,10 +23,10 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb my-5">
     <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Rental Booking</li>
+    <li class="breadcrumb-item active" aria-current="page">New Booking</li>
   </ol>
 </nav>
-<form id="newRentalBookingForm">
+<form id="newRideBookingForm">
 
     <div class="mt-5">
         <div class="border-bottom pb-4">
@@ -66,6 +66,62 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            <hr/>
+            <p>Ride Info</p>
+            <div class="container-fluid">
+               <div class="row">
+                   <div class="col-md-3 col-sm-12 mb-3">
+                       <div class="form-group">
+                           <label class="form-label">Pickup Location</label>
+                           <div class="input-group">
+                               <input type="text" class="form-control" name="pickup_location" id="pickup_location" placeholder="pickup location" aria-label="PICKUP LOCATION"value="" required>
+                               <span class="input-group-text text-primary"><i class="fa-solid fa-location-dot"></i></i></span>
+                               <input type="hidden" id="pickup_lat" name="pickup_lat" value=""/>
+                               <input type="hidden" id="pickup_lon" name="pickup_lon" value=""/>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-md-3 col-sm-12 mb-3">
+                       <div class="form-group">
+                           <label class="form-label">Destination</label>
+                           <div class="input-group">
+                               <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" aria-label="DESTINATION" required>
+                               <span class="input-group-text text-danger"><i class="fa-solid fa-location-dot"></i></i></span>
+                               <input type="hidden" id="destination_lat" name="destination_lat" value=""/>
+                               <input type="hidden" id="destination_lon" name="destination_lon" value=""/>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-md-3 col-sm-6 mb-3">
+                       <div class="form-group">
+                           <label class="form-label">Select Pickup Date</label>
+                           <div class="input-group date">
+                               <input type="date" class="form-control" id="datepicker" placeholder="Select Pickup Date" aria-label="DATETIME" required>
+                               <span class="input-group-text text-success"><i class="fa-solid fa-calendar-days"></i></span>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="col-md-3 col-sm-6 mb-3">
+                       <div class="form-group">
+                           <label class="form-label">Select Pickup Time</label>
+                           <div class="input-group time">
+                               <input type="time" class="form-control" id="timepicker" placeholder="Select Pickup Time" aria-label="DATETIME" required>
+                                <span class="input-group-text text-success"><i class="fa-solid fa-clock"></i></span>
+                           </div>
+                       </div>
+                       <input type="hidden" id="pickup_dttm" name="pickup_dttm" value=""/>
+                   </div>
+                   <div class="col-md-12 col-sm-12 mb-12">
+                       <div class="form-group">
+                           <label class="form-label">Special Notes</label>
+                           <div class="input-group time">
+                               <textarea name="special_note" id="special_note" rows="3" class="form-control" placeholder="Enter Special Notes"></textarea>
+                           </div>
+                       </div>
+                       <input type="hidden" id="pickup_dttm" name="pickup_dttm" value=""/>
+                   </div>
+               </div>
             </div>
             <hr/>
             <p>Vehicle Info</p>
@@ -133,51 +189,44 @@
                     </div>
                 </div>
             </div>
-             <hr/>
-             <p>Booking Info</p>
+            <hr/>
+            <p>Available Driver</p>
              <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">Start Date</label>
-                            <div class="input-group">
-                                <input type="date" class="form-control" name="start_date" id="start_date" aria-label="START DATE"value="<%= java.time.LocalDate.now() %>" min="<%= java.time.LocalDate.now() %>" required>
-                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-12 mb-3">
-                        <div class="form-group">
-                            <label class="form-label">End Date</label>
-                            <div class="input-group">
-                                <input type="date" class="form-control" name="end_date" id="end_date" aria-label="END DATE" value="<%= java.time.LocalDate.now() %>" min="<%= java.time.LocalDate.now() %>" required>
-                                <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                     <div class="col-md-3 col-sm-6 mb-3">
+                 <div class="row">
+                     <div class="col-md-3 col-sm-12 mb-3">
                          <div class="form-group">
-                             <label class="form-label">Verify License</label>
-                             <div class="form-check">
-                                 <input type="checkbox" class="form-check-input" name="is_license_verified_value" id="is_license_verified_value" aria-label="License Verified">
-                                 <input type="hidden" name="is_license_verified" id="is_license_verified" value="N">
-                                 <label class="form-check-label" for="is_license_verified">License Verified</label>
+                             <label class="label">Customer Id</label>
+                             <div class="input-group">
+                                 <input type="text" class="form-control" name="user_id" id="user_id" placeholder="Customer" aria-label="Customer ID" readonly>
+                                 <button class="btn btn-outline-primary" type="button" id="customerLookup"><i class="fa-solid fa-magnifying-glass"></i></button>
                              </div>
                          </div>
                      </div>
-                     <div class="col-md-3 col-sm-6 mb-3">
+                     <div class="col-md-3 col-sm-12 mb-3">
                          <div class="form-group">
-                             <label class="form-label">Utility Bill</label>
-                             <div class="form-check">
-                                 <input type="checkbox" class="form-check-input" name="is_utility_bill_verified_value" id="is_utility_bill_verified_value" aria-label="Utility Bill Verified">
-                                 <input type="hidden" name="is_utility_bill_verified" id="is_utility_bill_verified" value="N">
-                                 <input type="hidden" name="no_of_days" id="no_of_days" value="1">
-                                 <input type="hidden" name="total_price" id="total_price">
-                                 <label class="form-check-label" for="is_utility_bill_verified">Utility Bill Verified</label>
+                             <label class="label">Full Name</label>
+                             <div class="input-group">
+                                 <input type="text" class="form-control" name="full_name" id="full_name" placeholder="Full Name" aria-label="Full Name" readonly>
                              </div>
                          </div>
                      </div>
-                </div>
+                     <div class="col-md-3 col-sm-12 mb-3">
+                         <div class="form-group">
+                             <label class="label">NIC</label>
+                             <div class="input-group">
+                                 <input type="text" class="form-control" name="nic" id="nic" placeholder="NIC" aria-label="NIC" readonly>
+                             </div>
+                         </div>
+                     </div>
+                     <div class="col-md-3 col-sm-12 mb-3">
+                         <div class="form-group">
+                             <label class="label">Email</label>
+                             <div class="input-group">
+                                 <input type="email" class="form-control" name="email" id="email" placeholder="Email" aria-label="EMAIL" readonly>
+                             </div>
+                         </div>
+                     </div>
+                 </div>
              </div>
             <div class="modal fade" id="customerSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -258,6 +307,59 @@
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
 <script>
+
+function getPickupCoordinates() {
+var pickUpLocation = $("#pickup_location").val();
+const url = "https://nominatim.openstreetmap.org/search?q="+pickUpLocation+"+Lanka&format=json";
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                console.log("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const location = data[0];
+            if (location) {
+                const lat = location.lat;
+                const lon = location.lon;
+                $("#pickup_lat").val(lat);
+                $("#pickup_lon").val(lon);
+                console.log("Latitude: "+lat+"Longitude: "+lon);
+            } else {
+                console.log("Location not found.");
+            }
+        })
+        .catch(error => {
+            console.error("There was a problem with the fetch operation:", error);
+        });
+}
+function getDestinationCoordinates() {
+var destinationValue = $("#destination").val();
+const url = "https://nominatim.openstreetmap.org/search?q="+destinationValue+"+Lanka&format=json";
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                console.log("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const location = data[0];
+            if (location) {
+                const lat = location.lat;
+                const lon = location.lon;
+                $("#destination_lat").val(lat);
+                $("#destination_lon").val(lon);
+                console.log("Latitude: "+lat+"Longitude: "+lon);
+            } else {
+                console.log("Location not found.");
+            }
+        })
+        .catch(error => {
+            console.error("There was a problem with the fetch operation:", error);
+        });
+}
   $(document).ready(function() {
       $('#customerLookup').click(function () {
           // Show the Bootstrap modal
@@ -428,11 +530,12 @@
 
     // Form submission
     $("form").on("submit", function(e) {
-      e.preventDefault(); // Prevent form submission to handle via AJAX
+      e.preventDefault();
+      getPickupCoordinates();
+      getDestinationCoordinates();
 
-      // Initialize a flag for validation success
       var isValid = true;
-      var errorMessage = "";  // Initialize a variable to accumulate error messages
+      var errorMessage = "";
 
       var userId = $("#user_id").val();
       if(userId === ""){
@@ -447,23 +550,21 @@
       const startDate = $('#start_date').val();
       const endDate = $('#end_date').val();
 
-      if (startDate && endDate) {
-          const start = new Date(startDate);
-          const end = new Date(endDate);
-
-            if (end < start) {
-                errorMessage = "Invalid End Date"; // Show error message
-                isValid = false; // Validation failed
-            }else {
-                const timeDifference = end - start; // Difference in milliseconds
-                const dayDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
-                dayDifference === 0 ? $('#no_of_days').val(1) : $('#no_of_days').val(dayDifference);
-            }
+      var date = $('#datePicker').val();
+      var time = $('#timePicker').val();
+      if(date === ""){
+          errorMessage += "Select Pickup Date";
+          isValid = false;
       }
-      var noOfDays = $("#no_of_days").val();
-      var DayPrice = $("#price_per_day").val();
-      var total = (noOfDays*DayPrice);
-      $("#total_price").val(total);
+      if(date === ""){
+          errorMessage += "Select Pickup Time";
+          isValid = false;
+      }
+      if (date && time) {
+          var datetime = date + ' ' + time;
+          $('#pickup_dttm').val(datetime);
+          console.log('Combined DateTime:', datetime);
+      }
 
       function validationMessage(errorMessage)
       {

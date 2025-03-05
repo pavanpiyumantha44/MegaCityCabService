@@ -56,7 +56,7 @@ public class AdminDataController extends HttpServlet {
         }else if (action.equals("bookings")){
             showBookings(req,res);
         }else if (action.equals("bookings/addRental")){
-            showAddRentalBooking(req,res);
+            //showAddRentalBooking(req,res);
         }else if(action.equals("customers/list")){
             showCustomers(req,res);
         }else if(action.equals("customers/add")){
@@ -129,23 +129,6 @@ public class AdminDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
         }
 
-    }
-    private void showAddRentalBooking(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        try{
-            HttpSession session = req.getSession();
-            int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 1) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
-                return;
-            }
-            List<Customer> customers = userService.getAllCustomers();
-            List<Vehicle> vehicles = vehicleService.getAllAvailableVehicles();
-            req.setAttribute("customers",customers);
-            req.setAttribute("vehicles",vehicles);
-            req.getRequestDispatcher("/WEB-INF/view/user/admin/booking/a_addRentalBooking.jsp").forward(req, res);
-        }catch (NullPointerException | SQLException e){
-            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-        }
     }
     private void showCustomers(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         try {
@@ -373,13 +356,14 @@ public class AdminDataController extends HttpServlet {
             String vehicleType = req.getParameter("vehicle_type");
             int noOfSeats = Integer.parseInt(req.getParameter("no_of_seats"));
             int meterReading = Integer.parseInt(req.getParameter("current_meter_reading"));
+            double baseFare = Double.parseDouble(req.getParameter("base_fare"));
             double pricePerDay = Double.parseDouble(req.getParameter("price_per_day"));
             double pricePerKm = Double.parseDouble(req.getParameter("price_per_km"));
             double pricePerExtraKm = Double.parseDouble(req.getParameter("price_per_extra_km"));
             double pricePerExtraHour = Double.parseDouble(req.getParameter("price_per_extra_hour"));
             String status = req.getParameter("status");
             System.out.println("VIN: " + vin + ", Model: " + model + ", Make: " + make + ", Year: " + year + ", Registration Number: " + registrationNumber + ", Vehicle Type: " + vehicleType + ", No. of Seats: " + noOfSeats + ", Meter Reading: " + meterReading + ", Price Per Day: " + pricePerDay + ", Price Per Km: " + pricePerKm + ", Price Per Extra Km: " + pricePerExtraKm + ", Price Per Extra Hour: " + pricePerExtraHour + ", Status: " + status);
-            Vehicle vehicle =new Vehicle(vin,model,make,year,registrationNumber,vehicleType,noOfSeats,meterReading,pricePerDay,pricePerKm,pricePerExtraKm,pricePerExtraHour,status);
+            Vehicle vehicle =new Vehicle(vin,model,make,year,registrationNumber,vehicleType,noOfSeats,meterReading,baseFare,pricePerDay,pricePerKm,pricePerExtraKm,pricePerExtraHour,status);
 
             try {
                 // Handling file upload
@@ -435,12 +419,12 @@ public class AdminDataController extends HttpServlet {
 
             //System.out.println(userId+" "+vehicleId+" "+startDate+" "+" "+endDate+" "+noOfDays+" "+pricePerDay+" "+isLicenseVerified+" "+isUtilityBillVerified+" "+startMeterReading+" "+endMeterReading+" "+totalPrice);
 
-            Booking booking = new Booking(Integer.parseInt(userId),Integer.parseInt(vehicleId),startDate,endDate,noOfDays,isLicenseVerified,isUtilityBillVerified,Integer.parseInt(startMeterReading),endMeterReading,totalPrice,bookingStatus);
+            //Booking booking = new Booking(Integer.parseInt(userId),Integer.parseInt(vehicleId),startDate,endDate,noOfDays,isLicenseVerified,isUtilityBillVerified,Integer.parseInt(startMeterReading),endMeterReading,totalPrice,bookingStatus);
 
             try {
                 CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
                 Booking bookingData = new Gson().fromJson(getDataMapper().mapData(req), Booking.class);
-                response = bookingService.addBooking(booking);
+                //response = bookingService.addBooking(booking);
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(response));
             } catch (TextFormat.ParseException e){

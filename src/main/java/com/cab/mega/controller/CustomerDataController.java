@@ -339,13 +339,14 @@ public class CustomerDataController extends HttpServlet {
             String vehicleType = req.getParameter("vehicle_type");
             int noOfSeats = Integer.parseInt(req.getParameter("no_of_seats"));
             int meterReading = Integer.parseInt(req.getParameter("current_meter_reading"));
+            double baseFare = Double.parseDouble(req.getParameter("base_fare"));
             double pricePerDay = Double.parseDouble(req.getParameter("price_per_day"));
             double pricePerKm = Double.parseDouble(req.getParameter("price_per_km"));
             double pricePerExtraKm = Double.parseDouble(req.getParameter("price_per_extra_km"));
             double pricePerExtraHour = Double.parseDouble(req.getParameter("price_per_extra_hour"));
             String status = req.getParameter("status");
             System.out.println("VIN: " + vin + ", Model: " + model + ", Make: " + make + ", Year: " + year + ", Registration Number: " + registrationNumber + ", Vehicle Type: " + vehicleType + ", No. of Seats: " + noOfSeats + ", Meter Reading: " + meterReading + ", Price Per Day: " + pricePerDay + ", Price Per Km: " + pricePerKm + ", Price Per Extra Km: " + pricePerExtraKm + ", Price Per Extra Hour: " + pricePerExtraHour + ", Status: " + status);
-            Vehicle vehicle =new Vehicle(vin,model,make,year,registrationNumber,vehicleType,noOfSeats,meterReading,pricePerDay,pricePerKm,pricePerExtraKm,pricePerExtraHour,status);
+            Vehicle vehicle =new Vehicle(vin,model,make,year,registrationNumber,vehicleType,noOfSeats,meterReading,baseFare,pricePerDay,pricePerKm,pricePerExtraKm,pricePerExtraHour,status);
 
             try {
                 // Handling file upload

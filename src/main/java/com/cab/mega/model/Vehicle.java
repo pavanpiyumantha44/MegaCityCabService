@@ -13,6 +13,7 @@ public class Vehicle {
     private String vehicleType;
     private int noOfSeats;
     private int currentMeterReading;
+    private double baseFare;
     private double pricePerDay;
     private double pricePerKm;
     private double pricePerExtraKm;
@@ -21,7 +22,7 @@ public class Vehicle {
     private String imageName;
     private List<VehicleImage> images;
 
-    public Vehicle(int vehicleId, String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status, List<VehicleImage> images) {
+    public Vehicle(int vehicleId, String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading,double baseFare, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status, List<VehicleImage> images) {
         this.vehicleId = vehicleId;
         this.vin = vin;
         this.model = model;
@@ -31,6 +32,7 @@ public class Vehicle {
         this.vehicleType = vehicleType;
         this.noOfSeats = noOfSeats;
         this.currentMeterReading = currentMeterReading;
+        this.baseFare = baseFare;
         this.pricePerDay = pricePerDay;
         this.pricePerKm = pricePerKm;
         this.pricePerExtraKm = pricePerExtraKm;
@@ -38,7 +40,7 @@ public class Vehicle {
         this.status = status;
         this.images = images;
     }
-    public Vehicle(int vehicleId, String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status, String imageName) {
+    public Vehicle(int vehicleId, String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading,double baseFare, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status, String imageName) {
         this.vehicleId = vehicleId;
         this.vin = vin;
         this.model = model;
@@ -48,6 +50,7 @@ public class Vehicle {
         this.vehicleType = vehicleType;
         this.noOfSeats = noOfSeats;
         this.currentMeterReading = currentMeterReading;
+        this.baseFare = baseFare;
         this.pricePerDay = pricePerDay;
         this.pricePerKm = pricePerKm;
         this.pricePerExtraKm = pricePerExtraKm;
@@ -56,7 +59,7 @@ public class Vehicle {
         this.imageName = imageName;
     }
 
-    public Vehicle(String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status) {
+    public Vehicle(String vin, String model, String make, int year, String registrationNumber, String vehicleType, int noOfSeats, int currentMeterReading, double baseFare, double pricePerDay, double pricePerKm, double pricePerExtraKm, double pricePerExtraHour, String status) {
         this.vin = vin;
         this.model = model;
         this.make = make;
@@ -65,6 +68,7 @@ public class Vehicle {
         this.vehicleType = vehicleType;
         this.noOfSeats = noOfSeats;
         this.currentMeterReading = currentMeterReading;
+        this.baseFare = baseFare;
         this.pricePerDay = pricePerDay;
         this.pricePerKm = pricePerKm;
         this.pricePerExtraKm = pricePerExtraKm;
@@ -143,6 +147,14 @@ public class Vehicle {
 
     public void setCurrentMeterReading(int currentMeterReading) {
         this.currentMeterReading = currentMeterReading;
+    }
+
+    public double getBaseFare() {
+        return baseFare;
+    }
+
+    public void setBaseFare(double baseFare) {
+        this.baseFare = baseFare;
     }
 
     public double getPricePerDay() {

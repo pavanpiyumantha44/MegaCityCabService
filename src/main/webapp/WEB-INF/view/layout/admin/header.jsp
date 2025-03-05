@@ -48,17 +48,17 @@
                             Dashboard
                         </a>
                     </li>
-                    <li class="sidebar-item">
+                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#bookings" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i>
-                            Bookings
+                            aria-expanded="false"><i class="fa-solid fa-taxi"></i></i>
+                            Rides
                         </a>
                         <ul id="bookings" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item">
-                                <a href="${pageContext.request.contextPath}/admin?action=bookings" class="sidebar-link">Available Bookings</a>
+                                <a href="${pageContext.request.contextPath}/booking?action=list" class="sidebar-link">Available Bookings</a>
                             </li>
                             <li class="sidebar-item">
-                                <a href="${pageContext.request.contextPath}/admin?action=bookings/addRental" class="sidebar-link">Create Booking</a>
+                                <a href="${pageContext.request.contextPath}/booking?action=add" class="sidebar-link">Create Booking</a>
                             </li>
                         </ul>
                     </li>

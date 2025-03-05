@@ -30,13 +30,13 @@ public class BookingService {
     }
     public CommonResponseModel addBooking(Booking booking){
         Connection connection = null;
-        if (booking.getUserId()<=0) {
+        if (booking.getCustomerId()<=0) {
             return new CommonResponseModel("Invalid User Id", false, null);
         } else if (booking.getVehicleId()<=0) {
             return new CommonResponseModel("Invalid Vehicle Id", false, null);
-        } else if (booking.getStartDate() == null) {
+        } else if (booking.getPickupLocation() == null) {
             return new CommonResponseModel("Invalid Start Date", false, null);
-        } else if (booking.getEndDate() == null) {
+        } else if (booking.getPickupDateTime() == null) {
             return new CommonResponseModel("Invalid End Date", false, null);
         } else if (booking.getStartMeterReading()<0) {
             return new CommonResponseModel("Invalid Start Meter Reading", false, null);
@@ -45,7 +45,7 @@ public class BookingService {
         } else {
             try {
                 connection = DBConnectionFactory.getConnection();
-                boolean isBookingCreated = bookingDao.addBooking(booking);
+                boolean isBookingCreated = bookingDao.createBooking(booking);
                 return new CommonResponseModel("Booking Created Successfully!", true, null);
             } catch (Exception e) {
                 e.printStackTrace();
