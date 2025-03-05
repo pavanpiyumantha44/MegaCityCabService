@@ -2,6 +2,9 @@ package com.cab.mega.controller;
 
 import com.cab.mega.Service.AuthService;
 import com.cab.mega.Service.LoginService;
+import com.cab.mega.Service.UserService;
+import com.cab.mega.model.CommonResponseModel;
+import com.cab.mega.model.Customer;
 import com.cab.mega.model.LoginModel;
 import com.cab.mega.model.User;
 import com.google.gson.Gson;
@@ -22,9 +25,11 @@ import static com.cab.mega.utils.datamapper.DataMapper.getDataMapper;
 @WebServlet("/auth")
 public class AuthController extends HttpServlet {
     AuthService authService;
+    UserService userService;
 
     public void init() throws ServletException {
         authService = AuthService.getAuthService();
+        userService = UserService.getInstance();
     }
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException{
@@ -68,45 +73,6 @@ public class AuthController extends HttpServlet {
                 res.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid action type.");
         }
     }
-    private void sendJsonResponse(HttpServletResponse response, boolean success, String message, String returnUrl) throws IOException {
-//        System.out.println("working");
-//        System.out.println(success);
-//        System.out.println(message);
-//        System.out.println(returnUrl);
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        out.print("{\"success\":" + success + ",\"message\":\"" + message + "\" " + (returnUrl != null ? ",\"returnUrl\":\"" + returnUrl + "\"" : "") + "}");
-        out.flush();
-    }
-//private void sendJsonResponse(HttpServletResponse response, boolean success, String message, String returnUrl) throws IOException {
-//    System.out.println("working");
-//    System.out.println(success);
-//    System.out.println(message);
-//    System.out.println(returnUrl);
-//    response.setContentType("application/json");
-//    response.setCharacterEncoding("UTF-8");
-//
-//    // Use a Java object to represent the response
-//    class JsonResponse {
-//        boolean success;
-//        String message;
-//        String returnUrl;
-//
-//        JsonResponse(boolean success, String message, String returnUrl) {
-//            this.success = success;
-//            this.message = message;
-//            this.returnUrl = returnUrl;
-//        }
-//    }
-//
-//    JsonResponse jsonResponse = new JsonResponse(success, message, returnUrl);
-//    String json = new Gson().toJson(jsonResponse);
-//    System.out.println(json);
-//    PrintWriter out = response.getWriter();
-//    out.print(json);
-//    out.flush();
-//}
     public void login(HttpServletRequest req, HttpServletResponse res)throws IOException, ServletException{
         String email = req.getParameter("email");
         String password = req.getParameter("password");
@@ -115,14 +81,41 @@ public class AuthController extends HttpServlet {
             LoginModel loginModel = new LoginModel();
             loginModel.setEmail(email);
             loginModel.setPassword(password);
-
             User user = authService.loginUser(loginModel,req);
 
             if (user != null) {
-                //sendJsonResponse(res, true, "Login successful!", returnUrl);
-                res.sendRedirect(req.getContextPath()+"/admin?action=dashboard");
+                System.out.println(user.getRoleId());
+                if(user.getRoleId()==1){
+                    //res.sendRedirect(req.getContextPath()+"/admin?action=dashboard");
+                    CommonResponseModel response = new CommonResponseModel("/admin?action=dashboard",true,null);
+                    res.setContentType("application/json");
+                    res.getWriter().write(new Gson().toJson(response));
+                }else if(user.getRoleId()==2){
+                    //res.sendRedirect(req.getContextPath()+"/admin?action=dashboard");
+                    CommonResponseModel response = new CommonResponseModel("/admin?action=dashboard",true,null);
+                    res.setContentType("application/json");
+                    res.getWriter().write(new Gson().toJson(response));
+                }else if(user.getRoleId()==3){
+                    //res.sendRedirect(req.getContextPath()+"/");
+                    CommonResponseModel response = new CommonResponseModel("/driver?action=dashboard",true,null);
+                    res.setContentType("application/json");
+                    res.getWriter().write(new Gson().toJson(response));
+                } else if(user.getRoleId()==4){
+                    //res.sendRedirect(req.getContextPath()+"/");
+                    CommonResponseModel response = new CommonResponseModel("/customer?action=dashboard",true,null);
+                    res.setContentType("application/json");
+                    res.getWriter().write(new Gson().toJson(response));
+                }else{
+                    CommonResponseModel response = new CommonResponseModel("Unauthorized",false,null);
+                    res.setContentType("application/json");
+                    res.getWriter().write(new Gson().toJson(response));
+                    //res.sendRedirect(req.getContextPath()+"/login.jsp=unauthorized");
+                }
             } else {
-                //sendJsonResponse(res, false, "Invalid email or password!", null);
+                CommonResponseModel response = new CommonResponseModel("Invalid Username or Password",false,null);
+                res.setContentType("application/json");
+                res.getWriter().write(new Gson().toJson(response));
+                //res.sendRedirect(req.getContextPath()+"/login.jsp=unauthorized");
             }
 
         } catch (Exception e) {
@@ -130,14 +123,40 @@ public class AuthController extends HttpServlet {
         }
     }
     public void register(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        try {
+
+            String firstName = req.getParameter("first_name");
+            String lastName = req.getParameter("last_name");
+            String nic = req.getParameter("nic");
+            String email = req.getParameter("email");
+            String password = req.getParameter("password");
+            String phone = req.getParameter("phone");
+            String gender = req.getParameter("gender");
+            String address = req.getParameter("address");
+            String membershipStatus = "regular";
+            System.out.println(gender);
+            User user = new User(firstName,lastName,nic,email,password,phone,gender,4);
+            Customer customer = new Customer(address,membershipStatus);
+            try {
+                CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
+                Customer customerData = new Gson().fromJson(getDataMapper().mapData(req), Customer.class);
+                response = userService.addCustomer(user,customer);
+                res.setContentType("application/json");
+                res.getWriter().write(new Gson().toJson(response));
+            }catch (Exception e){
+                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+                e.printStackTrace();
+            }
+        }catch (NullPointerException e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
 
     }
     public void logout(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        HttpSession session = req.getSession(false); // Get session if exists
+        HttpSession session = req.getSession(false);
         if (session != null) {
-            session.invalidate(); // Destroy session
+            session.invalidate();
         }
-        System.out.println(req.getContextPath());
         res.sendRedirect(req.getContextPath() + "/login.jsp");
     }
 }

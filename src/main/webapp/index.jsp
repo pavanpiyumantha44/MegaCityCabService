@@ -35,7 +35,7 @@
           </li>
         </ul>
         <div class="nav__btns">
-          <button class="btn btn__primary">Sign Up</button>
+          <button class="btn btn__primary"><a href="signup.jsp" style="text-decoration:none;">Sign Up</a></button>
           <button class="btn btn__secondary"><a href="login.jsp" style="color:white; text-decoration:none;">Sign In</a></button>
         </div>
       </nav>
@@ -138,9 +138,9 @@
           </ul>
         </div>
         <div class="footer__col">
-          <h4>About RentalX</h4>
+          <h4>About MegaCity</h4>
           <ul class="footer__links">
-            <li><a href="#">Why RentalX</a></li>
+            <li><a href="#">Why MegaCity</a></li>
             <li><a href="#">Our Story</a></li>
             <li><a href="#">Investors</a></li>
             <li><a href="#">Press Centers</a></li>

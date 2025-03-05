@@ -85,8 +85,7 @@ public class AuthDaoImpl implements AuthDao{
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, loginModel.getEmail());
-            //statement.setString(2, getEncrypter().hashPassword(loginModel.getPassword()));
-            statement.setString(2,loginModel.getPassword());
+            statement.setString(2,getEncrypter().hashPassword(loginModel.getPassword()));
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     User user = new User(
@@ -100,6 +99,8 @@ public class AuthDaoImpl implements AuthDao{
                 }
             }
         } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
         return null;
