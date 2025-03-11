@@ -60,6 +60,9 @@ public class UserService {
     public List<Customer> getAllCustomers() throws SQLException{
         return customerDao.getAllCustomers();
     }
+    public Customer getCustomer(int customerId){
+        return customerDao.getCustomerById(customerId);
+    }
     public CommonResponseModel addCustomer(User user, Customer customer) throws SQLException {
         Connection connection = null;
         String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
@@ -111,7 +114,9 @@ public class UserService {
     public List<Driver> getAllDrivers() {
         return driverDao.getAllDrivers();
     }
-
+    public Driver getDriver(int driverId){
+        return driverDao.getDriverById(driverId);
+    }
     public CommonResponseModel addDriver(User user, Driver driver) throws SQLException {
         Connection connection = null;
         String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";

@@ -80,6 +80,9 @@ public class VehicleService {
             return new CommonResponseModel("Something went wrong!", false, null);
         }
     }
+    public Vehicle getVehicle(int vehicleId){
+        return vehicleDao.getVehicleById(vehicleId);
+    }
     public List<Vehicle> getAllVehicles() {
         return vehicleDao.getVehicles();
     }

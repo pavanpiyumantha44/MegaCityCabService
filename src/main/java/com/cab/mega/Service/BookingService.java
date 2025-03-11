@@ -34,19 +34,23 @@ public class BookingService {
             return new CommonResponseModel("Invalid User Id", false, null);
         } else if (booking.getVehicleId()<=0) {
             return new CommonResponseModel("Invalid Vehicle Id", false, null);
-        } else if (booking.getPickupLocation() == null) {
-            return new CommonResponseModel("Invalid Start Date", false, null);
+        } else if (booking.getDriverId()<=0) {
+            return new CommonResponseModel("Invalid Driver Id", false, null);
+        }else if (booking.getPickupLocation() == null) {
+            return new CommonResponseModel("Invalid Pickup Location", false, null);
+        }else if (booking.getDestination() == null) {
+            return new CommonResponseModel("Invalid Destination", false, null);
         } else if (booking.getPickupDateTime() == null) {
-            return new CommonResponseModel("Invalid End Date", false, null);
+            return new CommonResponseModel("Invalid Pickup Date Time", false, null);
         } else if (booking.getStartMeterReading()<0) {
             return new CommonResponseModel("Invalid Start Meter Reading", false, null);
-        } else if (booking.getTotalPrice()<0) {
-            return new CommonResponseModel("Invalid Total Price", false, null);
         } else {
             try {
                 connection = DBConnectionFactory.getConnection();
                 boolean isBookingCreated = bookingDao.createBooking(booking);
-                return new CommonResponseModel("Booking Created Successfully!", true, null);
+                if(isBookingCreated){
+                    return new CommonResponseModel("Booking Created Successfully!", true, null);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -55,5 +59,8 @@ public class BookingService {
     }
     public List<Booking> getBookings() {
         return bookingDao.getAllBookings();
+    }
+    public Booking getBooking(int id){
+        return bookingDao.getBooking(id);
     }
 }

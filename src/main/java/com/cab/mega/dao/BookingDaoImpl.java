@@ -1,10 +1,12 @@
 package com.cab.mega.dao;
 
 import com.cab.mega.model.Booking;
+import com.cab.mega.model.Driver;
 import com.cab.mega.utils.database.DBConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public class BookingDaoImpl implements BookingDao{
     @Override
     public boolean createBooking(Booking booking) {
         Connection connection = DBConnectionFactory.getConnection();
-        String query = "INSERT INTO booking (customer_id,driver_id, vehicle_id, pickup_location,destination, pickup_lat, pickup_lon,destination_lat,destination_lon, special_note, start_meter_reading, end_meter_reading, distance_km, base_fare, price_per_km, waiting_price, total_fare,discount_price,pickup_dttm,dropoff_dttm, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO booking (customer_id,driver_id, vehicle_id, pickup_location,destination, pickup_lat, pickup_lon,destination_lat,destination_lon, special_note, start_meter_reading, end_meter_reading, distance_km, base_fare, price_per_km, waiting_price, total_fare,discount_price,pickup_dttm, status, payment_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setInt(1,booking.getCustomerId());
@@ -45,13 +47,99 @@ public class BookingDaoImpl implements BookingDao{
     }
 
     @Override
+    public Booking getBooking(int id) {
+        Booking booking = null;
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "SELECT * FROM booking where booking_id=?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                booking = new Booking(
+                        resultSet.getInt("booking_id"),
+                        resultSet.getInt("customer_id"),
+                        resultSet.getInt("driver_id"),
+                        resultSet.getInt("vehicle_id"),
+                        resultSet.getString("pickup_location"),
+                        resultSet.getString("destination"),
+                        resultSet.getString("pickup_lat"),
+                        resultSet.getString("pickup_lon"),
+                        resultSet.getString("destination_lat"),
+                        resultSet.getString("destination_lon"),
+                        resultSet.getString("special_note"),
+                        resultSet.getDouble("start_meter_reading"),
+                        resultSet.getDouble("end_meter_reading"),
+                        resultSet.getDouble("distance_km"),
+                        resultSet.getDouble("base_fare"),
+                        resultSet.getDouble("price_per_km"),
+                        resultSet.getDouble("waiting_price"),
+                        resultSet.getDouble("total_fare"),
+                        resultSet.getDouble("discount_price"),
+                        resultSet.getDouble("cancellation_price"),
+                        resultSet.getString("booking_time"),
+                        resultSet.getString("pickup_dttm"),
+                        resultSet.getString("dropoff_dttm"),
+                        resultSet.getString("status"),
+                        resultSet.getString("payment_status"),
+                        resultSet.getString("payment_method"),
+                        resultSet.getString("cancelled_by")
+                );
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return booking;
+    }
+
+    @Override
     public boolean updateBooking(Booking booking) {
         return false;
     }
 
     @Override
     public List<Booking> getAllBookings() {
+        Connection connection = DBConnectionFactory.getConnection();
         List<Booking> bookings = new ArrayList<>();
+        String query = "SELECT * FROM booking";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                bookings.add(new Booking(
+                        resultSet.getInt("booking_id"),
+                        resultSet.getInt("customer_id"),
+                        resultSet.getInt("driver_id"),
+                        resultSet.getInt("vehicle_id"),
+                        resultSet.getString("pickup_location"),
+                        resultSet.getString("destination"),
+                        resultSet.getString("pickup_lat"),
+                        resultSet.getString("pickup_lon"),
+                        resultSet.getString("destination_lat"),
+                        resultSet.getString("destination_lon"),
+                        resultSet.getString("special_note"),
+                        resultSet.getDouble("start_meter_reading"),
+                        resultSet.getDouble("end_meter_reading"),
+                        resultSet.getDouble("distance_km"),
+                        resultSet.getDouble("base_fare"),
+                        resultSet.getDouble("price_per_km"),
+                        resultSet.getDouble("waiting_price"),
+                        resultSet.getDouble("total_fare"),
+                        resultSet.getDouble("discount_price"),
+                        resultSet.getDouble("cancellation_price"),
+                        resultSet.getString("booking_time"),
+                        resultSet.getString("pickup_dttm"),
+                        resultSet.getString("dropoff_dttm"),
+                        resultSet.getString("status"),
+                        resultSet.getString("payment_status"),
+                        resultSet.getString("payment_method"),
+                        resultSet.getString("cancelled_by")
+                ));
+            }
+            System.out.println(bookings);
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
         return bookings;
     }
 }

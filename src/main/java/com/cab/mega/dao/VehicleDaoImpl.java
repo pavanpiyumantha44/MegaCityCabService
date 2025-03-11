@@ -61,6 +61,41 @@ public class VehicleDaoImpl implements VehicleDao{
     }
 
     @Override
+    public Vehicle getVehicleById(int vehicleId) {
+        Connection connection = DBConnectionFactory.getConnection();
+        Vehicle vehicle=null;
+        String query = "SELECT v.vehicle_id,v.vin, v.model, v.make, v.year, v.registration_number, v.vehicle_type, v.no_of_seats, v.current_meter_reading, v.base_fare, v.price_per_day, v.price_per_km, v.price_per_extra_km, v.price_per_extra_hour, v.status, vi.image_file_path from vehicle as v join vehicle_image as vi on v.vehicle_id = vi.vehicle_id where v.vehicle_id = ?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,vehicleId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                vehicle = (new Vehicle(
+                        resultSet.getInt("vehicle_id"),
+                        resultSet.getString("vin"),
+                        resultSet.getString("model"),
+                        resultSet.getString("make"),
+                        resultSet.getInt("year"),
+                        resultSet.getString("registration_number"),
+                        resultSet.getString("vehicle_type"),
+                        resultSet.getInt("no_of_seats"),
+                        resultSet.getInt("current_meter_reading"),
+                        resultSet.getDouble("base_fare"),
+                        resultSet.getDouble("price_per_day"),
+                        resultSet.getDouble("price_per_km"),
+                        resultSet.getDouble("price_per_extra_km"),
+                        resultSet.getDouble("price_per_extra_hour"),
+                        resultSet.getString("status"),
+                        resultSet.getString("image_file_path")
+                ));
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return vehicle;
+    }
+
+    @Override
     public List<Vehicle> getVehicles() {
         Connection connection = DBConnectionFactory.getConnection();
         List<Vehicle> vehicles = new ArrayList<>();

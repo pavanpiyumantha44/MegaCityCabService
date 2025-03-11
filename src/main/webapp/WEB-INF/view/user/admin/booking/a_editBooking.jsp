@@ -17,16 +17,20 @@
 #vehicleLookupTbl tbody tr:hover {
     background-color: #f5f5f5;
 }
+#map {
+    height: 500px;
+    width: 100%;
+}
 </style>
 <!-- Content Area -->
 <div>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb my-5">
     <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Booking</li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Booking <span id="displayBookingId"></span></li>
   </ol>
 </nav>
-<form id="newBookingForm">
+<form id="updateBookingForm">
 
     <div class="mt-5">
         <div class="border-bottom pb-4">
@@ -66,62 +70,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <hr/>
-            <p>Ride Info</p>
-            <div class="container-fluid">
-               <div class="row">
-                   <div class="col-md-3 col-sm-12 mb-3">
-                       <div class="form-group">
-                           <label class="form-label">Pickup Location</label>
-                           <div class="input-group">
-                               <input type="text" class="form-control" name="pickup_location" id="pickup_location" placeholder="pickup location" aria-label="PICKUP LOCATION"value="" required>
-                               <span class="input-group-text text-primary"><i class="fa-solid fa-location-dot"></i></i></span>
-                               <input type="hidden" id="pickup_lat" name="pickup_lat" value=""/>
-                               <input type="hidden" id="pickup_lon" name="pickup_lon" value=""/>
-                           </div>
-                       </div>
-                   </div>
-                   <div class="col-md-3 col-sm-12 mb-3">
-                       <div class="form-group">
-                           <label class="form-label">Destination</label>
-                           <div class="input-group">
-                               <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" aria-label="DESTINATION" required>
-                               <span class="input-group-text text-danger"><i class="fa-solid fa-location-dot"></i></i></span>
-                               <input type="hidden" id="destination_lat" name="destination_lat" value=""/>
-                               <input type="hidden" id="destination_lon" name="destination_lon" value=""/>
-                           </div>
-                       </div>
-                   </div>
-                   <div class="col-md-3 col-sm-6 mb-3">
-                       <div class="form-group">
-                           <label class="form-label">Select Pickup Date</label>
-                           <div class="input-group date">
-                               <input type="date" class="form-control" id="pickup_date" name="pickup_date" placeholder="Select Pickup Date" aria-label="DATE" required>
-                               <span class="input-group-text text-success"><i class="fa-solid fa-calendar-days"></i></span>
-                           </div>
-                       </div>
-                   </div>
-                   <div class="col-md-3 col-sm-6 mb-3">
-                       <div class="form-group">
-                           <label class="form-label">Select Pickup Time</label>
-                           <div class="input-group time">
-                               <input type="time" class="form-control" id="pickup_time" name="pickup_time" placeholder="Select Pickup Time" aria-label="DATETIME" required>
-                                <span class="input-group-text text-success"><i class="fa-solid fa-clock"></i></span>
-                           </div>
-                       </div>
-                       <input type="hidden" id="pickup_dttm" name="pickup_dttm" value=""/>
-                       <input type="hidden" id="base_fare" name="base_fare" value=""/>
-                   </div>
-                   <div class="col-md-12 col-sm-12 mb-12">
-                       <div class="form-group">
-                           <label class="form-label">Special Notes</label>
-                           <div class="input-group time">
-                               <textarea name="special_note" id="special_note" rows="3" class="form-control" placeholder="Enter Special Notes"></textarea>
-                           </div>
-                       </div>
-                   </div>
-               </div>
             </div>
             <hr/>
             <p>Vehicle Info</p>
@@ -195,7 +143,7 @@
                  <div class="row">
                      <div class="col-md-3 col-sm-12 mb-3">
                          <div class="form-group">
-                             <label class="label">Customer Id</label>
+                             <label class="label">Driver Id</label>
                              <div class="input-group">
                                  <input type="text" class="form-control" name="driver_id" id="driver_id" placeholder="Driver" aria-label="Driver ID" readonly>
                                  <button class="btn btn-outline-primary" type="button" id="driverLookup"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -228,107 +176,100 @@
                      </div>
                  </div>
              </div>
-            <div class="modal fade" id="customerSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="customerSearchModalLabel">Search Customers</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             <hr/>
+             <p>Ride Info</p>
+             <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3 col-sm-12 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Pickup Location</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="pickup_location" id="pickup_location" placeholder="pickup location" aria-label="PICKUP LOCATION"value="" required>
+                                <span class="input-group-text text-primary"><i class="fa-solid fa-location-dot"></i></i></span>
+                                <input type="hidden" id="pickup_lat" name="pickup_lat" value=""/>
+                                <input type="hidden" id="pickup_lon" name="pickup_lon" value=""/>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <!-- Search input field -->
-                            <input type="text" class="form-control" id="searchCustomerInput" placeholder="Enter customer name, NIC, or email">
-                            <!-- Table to display customer list -->
-                            <table id="customerLookupTbl" class="table mt-3">
-                                <thead>
-                                    <tr>
-                                        <th>Customer ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>NIC</th>
-                                        <th>Email</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <!-- Message for no records found -->
-                            <div id="noRecordsMessage" class="alert alert-warning mt-3" style="display: none;">Customer not found</div>
+                    </div>
+                    <div class="col-md-3 col-sm-12 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Destination</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="destination" id="destination" placeholder="Destination" aria-label="DESTINATION" required>
+                                <span class="input-group-text text-danger"><i class="fa-solid fa-location-dot"></i></i></span>
+                                <input type="hidden" id="destination_lat" name="destination_lat" value=""/>
+                                <input type="hidden" id="destination_lon" name="destination_lon" value=""/>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Select Pickup Date</label>
+                            <div class="input-group date">
+                                <input type="date" class="form-control" id="pickup_date" name="pickup_date" placeholder="Select Pickup Date" aria-label="DATE" required>
+                                <span class="input-group-text text-success"><i class="fa-solid fa-calendar-days"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Select Pickup Time</label>
+                            <div class="input-group time">
+                                <input type="time" class="form-control" id="pickup_time" name="pickup_time" placeholder="Select Pickup Time" aria-label="DATETIME" required>
+                                 <span class="input-group-text text-success"><i class="fa-solid fa-clock"></i></span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="pickup_dttm" name="pickup_dttm" value=""/>
+                        <input type="hidden" id="base_fare" name="base_fare" value=""/>
+                    </div>
+                    <div class="col-md-12 col-sm-12 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Special Notes</label>
+                            <div class="input-group time">
+                                <textarea name="special_note" id="special_note" rows="3" class="form-control" placeholder="Enter Special Notes"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal fade" id="driverSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="driverSearchModalLabel">Search Customers</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="row my-3">
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class=form_group>
+                                <label for="status" class="form-label fw-medium">Booking Status</label>
+                                <select id="status" name="status" class="form-select">
+                                    <option value="pending">Pending</option>
+                                    <option value="assigned">Assigned</option>
+                                    <option value="closed">Closed</option>
+                                </select>
                         </div>
-                        <div class="modal-body">
-                            <!-- Search input field -->
-                            <input type="text" class="form-control" id="searchDriverInput" placeholder="Enter driver id, name,or NIC">
-                            <!-- Table to display customer list -->
-                            <table id="driverLookupTbl" class="table mt-3">
-                                <thead>
-                                    <tr>
-                                        <th>Driver ID</th>
-                                        <th>First Name</th>
-                                        <th>Last Name</th>
-                                        <th>NIC</th>
-                                        <th>Phone</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                </tbody>
-                            </table>
-                            <!-- Message for no records found -->
-                            <div id="noRecordsMessage" class="alert alert-warning mt-3" style="display: none;">Driver not found</div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Estimated Distance (KM)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="distance_km" name="distance_km" placeholder="Distance km" readonly/>
+                                 <span class="input-group-text text-warning"><i class="fa-solid fa-map-location-dot"></i></span>
+                            </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="form-group">
+                            <label class="form-label">Estimate Time Duration (Min)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="duration" name="duration" placeholder="Estimate Time" readonly/>
+                                 <span class="input-group-text text-warning"><i class="fa-solid fa-clock"></i></span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 mb-3 d-flex justify-content-center align-items-center">
+                        <div class="form-group pt-3">
+                          <button type="button" class="btn btn-secondary" onclick="showRoute()">Show Route</button>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                       <div id="map"></div>
                     </div>
                 </div>
-            </div>
-        <div class="modal fade" id="vehicleSearchModal" tabindex="-1" aria-labelledby="vehicleSearchModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="vehicleSearchModalLabel">Search Vehicles</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Search input field -->
-                        <input type="text" class="form-control" id="searchVehicleInput" placeholder="Enter Vehicle Model, Type, or No of Seats">
-                        <!-- Table to display vehicle list -->
-                        <table id="vehicleLookupTbl" class="table mt-3">
-                            <thead>
-                                <tr>
-                                    <th>Vehicle ID</th>
-                                    <th>Model</th>
-                                    <th>Type</th>
-                                    <th>Registration No</th>
-                                    <th>No of Seats</th>
-                                    <th>Price per Day</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Rows will be populated here dynamically -->
-                            </tbody>
-                        </table>
-                        <!-- Message for no records found -->
-                        <div id="noRecordsMessage2" class="alert alert-warning mt-3" style="display: none;">Vehicle not found</div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+             </div>
         </div>
     </div>
     <!-- Form Buttons -->
@@ -337,13 +278,153 @@
         <button type="submit" class="btn btn-primary">Create</button>
     </div>
 </form>
+<div class="modal fade" id="customerSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="customerSearchModalLabel">Search Customers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Search input field -->
+                    <input type="text" class="form-control" id="searchCustomerInput" placeholder="Enter customer name, NIC, or email">
+                    <!-- Table to display customer list -->
+                    <table id="customerLookupTbl" class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>NIC</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <!-- Message for no records found -->
+                    <div id="noRecordsMessage" class="alert alert-warning mt-3" style="display: none;">Customer not found</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="driverSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="driverSearchModalLabel">Search Customers</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Search input field -->
+                    <input type="text" class="form-control" id="searchDriverInput" placeholder="Enter driver id, name,or NIC">
+                    <!-- Table to display customer list -->
+                    <table id="driverLookupTbl" class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th>Driver ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>NIC</th>
+                                <th>Phone</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <!-- Message for no records found -->
+                    <div id="noRecordsMessage" class="alert alert-warning mt-3" style="display: none;">Driver not found</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="modal fade" id="vehicleSearchModal" tabindex="-1" aria-labelledby="vehicleSearchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="vehicleSearchModalLabel">Search Vehicles</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search input field -->
+                <input type="text" class="form-control" id="searchVehicleInput" placeholder="Enter Vehicle Model, Type, or No of Seats">
+                <!-- Table to display vehicle list -->
+                <table id="vehicleLookupTbl" class="table mt-3">
+                    <thead>
+                        <tr>
+                            <th>Vehicle ID</th>
+                            <th>Model</th>
+                            <th>Type</th>
+                            <th>Registration No</th>
+                            <th>No of Seats</th>
+                            <th>Price per Day</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be populated here dynamically -->
+                    </tbody>
+                </table>
+                <!-- Message for no records found -->
+                <div id="noRecordsMessage2" class="alert alert-warning mt-3" style="display: none;">Vehicle not found</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
+<script src="${pageContext.request.contextPath}/assets/js/location.js"></script>
 <script>
-  $(document).ready(function() {
-
-      const customers = <%= new Gson().toJson(request.getAttribute("customers")) %>;
-          console.log(customers);
+$(document).ready(function() {
+      const booking = <%= new Gson().toJson(request.getAttribute("booking")) %>;
+      const customer = <%= new Gson().toJson(request.getAttribute("customer")) %>;
+      const driver = <%= new Gson().toJson(request.getAttribute("driver")) %>;
+      const vehicle = <%= new Gson().toJson(request.getAttribute("vehicle")) %>;
+          console.log(booking);
+          console.log(customer);
+          console.log(driver);
+          console.log(vehicle);
+          //set customer details
+          $("#customer_id").val(customer.customerId);
+          $("#full_name").val(customer.firstName+" "+customer.lastName);
+          $("#nic").val(customer.nic);
+          $("#email").val(customer.email);
+          //set ride details
+          $("#pickup_location").val(booking.pickupLocation);
+          $("#destination").val(booking.destination);
+          $("#pickup_lat").val(booking.pickupLat);
+          $("#pickup_lon").val(booking.pickupLon);
+          $("#destination_lat").val(booking.destinationLat);
+          $("#destination_lon").val(booking.destinationLon);
+          $("#status").val(booking.status);
+          const dateTimeString = booking.pickupDateTime;
+          const [date, time] = dateTimeString.split(" ");
+          $("#pickup_date").val(date);
+          $("#pickup_time").val(time);
+          $("#special_note").val(booking.specialNote);
+          //set vehicle details
+          $("#vehicle_id").val(vehicle.vehicle_id);
+          $("#vin").val(vehicle.vin);
+          $("#registration_number").val(vehicle.registrationNumber);
+          $("#model").val(vehicle.model);
+          $("#no_of_seats").val(vehicle.noOfSeats);
+          $("#price_per_km").val(vehicle.pricePerKm);
+          $("#vehicle_type").val(vehicle.vehicleType);
+          $('#vehicleImage').attr('src', '${pageContext.request.contextPath}/assets/images/'+vehicle.imageName);
+          //set driver details
+          $("#driver_id").val(driver.driverId);
+          $("#driver_full_name").val(driver.firstName+" "+driver.lastName);
+          $("#driver_nic").val(driver.nic);
+          $("#driver_phone").val(driver.phone);
+          $("displayBookingId").append(booking.bookingId);
 
           $('#customerLookup').click(function () {
               $('#customerSearchModal').modal('show');
@@ -606,12 +687,12 @@
       if(isValid){
           $.ajax({
             type: "POST",
-            url: "${pageContext.request.contextPath}/booking?action=add",
+            url: "${pageContext.request.contextPath}/booking?action=update",
             data: $(this).serialize(),
             success: function(response) {
               console.log(response);
               if(response.isSuccess){
-                $("#newBookingForm")[0].reset();
+                $("#updateBookingForm")[0].reset();
                 Toastify({
                      text: response.message,
                      duration: 3000,
