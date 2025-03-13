@@ -31,6 +31,18 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <!-- Sweet Alert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <style>
+        .show{
+            display:block;
+        }
+        .hide{
+            display:none
+        }
+    </style>
 </head>
 
 <body>
@@ -43,24 +55,10 @@
                 </div>
                 <ul class="sidebar-nav">
                     <li class="sidebar-item">
-                        <a href="${pageContext.request.contextPath}/customer?action=dashboard" class="sidebar-link">
-                            <i class="fa-solid fa-list pe-2"></i>
+                        <a href="${pageContext.request.contextPath}/driver?action=dashboard" class="sidebar-link">
+                            <i class="fa-solid fa-taxi"></i>
                             Dashboard
                         </a>
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#bookings" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i>
-                            Bookings
-                        </a>
-                        <ul id="bookings" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="${pageContext.request.contextPath}/customer?action=bookings" class="sidebar-link">View Bookings</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Create Booking</a>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </div>

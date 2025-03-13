@@ -2,7 +2,7 @@
             </main>
             <footer class="footer">
                 <div class="container-fluid">
-                    <div class="row text-black text-center" >
+                    <div class="row text-white text-center p-2" style="background-color:#233143">
                         <p class="mb-0">
                             &copy; 2025 MegaCity Cabs
                         </p>

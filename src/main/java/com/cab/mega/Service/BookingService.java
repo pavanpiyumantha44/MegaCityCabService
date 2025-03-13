@@ -9,7 +9,7 @@ import com.cab.mega.utils.database.DBConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.*;
 
 
 public class BookingService {
@@ -62,5 +62,62 @@ public class BookingService {
     }
     public Booking getBooking(int id){
         return bookingDao.getBooking(id);
+    }
+    public List<Booking> getAssignedBookingByDriverId(int id){return bookingDao.getAssignedBookingByDriverId(id);}
+
+    public CommonResponseModel updateRideDetails(Booking booking){
+        Map<String, Object> responseData = new HashMap<>();
+        if(booking.getStatus().equals("assigned")){
+            responseData.put("assigned",booking.getStatus());
+        }
+        if(booking.getStatus().equals("ongoing")){
+            responseData.put("status",booking.getStatus());
+        }
+        if(booking.getStatus().equals("arrived")){
+            responseData.put("status",booking.getStatus());
+        }
+        try{
+            boolean isRideUpdated = bookingDao.updateRide(booking);
+            if(isRideUpdated){
+                return new CommonResponseModel("Status Updated Successfully!", true,responseData);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new CommonResponseModel("Something went wrong!", false, null);
+    }
+    public CommonResponseModel updateRideCompleted(Booking booking){
+        Map<String, Object> responseData = new HashMap<>();
+        if(booking.getStatus().equals("completed")){
+            responseData.put("status",booking.getStatus());
+            responseData.put("distanceKm",booking.getDistanceKm());
+            responseData.put("discountPrice",booking.getDiscountPrice());
+            responseData.put("totalPrice",booking.getTotalPrice());
+        }
+        try{
+            boolean isRideUpdated = bookingDao.updateRideCompleted(booking);
+            if(isRideUpdated){
+                return new CommonResponseModel("Status Updated Successfully!", true,responseData);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new CommonResponseModel("Something went wrong!", false, null);
+    }
+    public CommonResponseModel updateRideClosed(Booking booking){
+        Map<String, Object> responseData = new HashMap<>();
+        if(booking.getStatus().equals("closed")){
+            responseData.put("status",booking.getStatus());
+            responseData.put("paymentStatus",booking.getPaymentStatus());
+        }
+        try{
+            boolean isRideUpdated = bookingDao.updateRideClosed(booking);
+            if(isRideUpdated){
+                return new CommonResponseModel("Status Updated Successfully!", true,responseData);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return new CommonResponseModel("Something went wrong!", false, null);
     }
 }
