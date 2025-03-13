@@ -91,10 +91,13 @@ $(document).ready(function() {
                                row += "<span class='badge text-bg-danger'>" + booking.status + "</span>";
                            }
                            row += "</td>" +
-                       "<td>" +
-                           "<button class='btn btn-sm btn-outline-primary me-2 update-btn' data-id='" + booking.bookingId + "'>" +
-                               "<i class='fa-solid fa-pencil'></i>" +
-                           "</button>" +
+                       "<td>"; if(booking.status == "closed")
+                        { row+="<a href='${pageContext.request.contextPath}/report?action=pdf/booking&id=" + booking.bookingId + "'>" +
+                                "<button class='btn btn-sm btn-outline-primary me-2'>" +
+                                    "<i class='fa-solid fa-file-arrow-down'></i>" +
+                                "</button>" +
+                            "</a>"}
+                            row +=
                            "<button class='btn btn-sm btn-outline-danger delete-btn' data-id='" + booking.bookingId + "'>" +
                                "<i class='fa-regular fa-trash-can'></i>" +
                            "</button>" +

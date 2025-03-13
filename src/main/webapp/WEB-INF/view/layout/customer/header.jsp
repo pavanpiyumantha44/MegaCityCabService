@@ -55,9 +55,6 @@
                         </a>
                         <ul id="bookings" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item">
-                                <a href="${pageContext.request.contextPath}/customer?action=bookings" class="sidebar-link">View Bookings</a>
-                            </li>
-                            <li class="sidebar-item">
                                 <a href="#" class="sidebar-link">Create Booking</a>
                             </li>
                         </ul>

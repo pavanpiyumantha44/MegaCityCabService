@@ -55,7 +55,7 @@
                      <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#bookings" data-bs-toggle="collapse"
                             aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i></i>
-                            Rides
+                            Bookings
                         </a>
                         <ul id="bookings" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
                             <li class="sidebar-item">

@@ -10,7 +10,9 @@ import com.cab.mega.Service.BookingService;
 import com.cab.mega.Service.UserService;
 import com.cab.mega.Service.VehicleService;
 import com.cab.mega.model.Booking;
+import com.cab.mega.model.Customer;
 import com.cab.mega.model.Vehicle;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
@@ -47,6 +49,9 @@ public class ReportDataController extends HttpServlet {
             downloadPDF(req,res);
         }else if (action.equals("excel/bookings")){
             //downloadExcel(req,res);
+        }else if(action.equals("pdf/booking")){
+            String id =  req.getParameter("id");
+            downloadBookingInvoicePDF(req,res,Integer.parseInt(id));
         }
     }
 
@@ -92,6 +97,97 @@ public class ReportDataController extends HttpServlet {
             res.setContentType("text/plain");
             res.getWriter().write("Error generating PDF: " + e.getMessage());
         }
+    }
+    private void downloadBookingInvoicePDF(HttpServletRequest req, HttpServletResponse res, int id) throws IOException {
+        Booking booking = bookingService.getBooking(id);
+        Customer customer = userService.getCustomer(booking.getCustomerId());
+        res.setContentType("application/pdf");
+        res.setHeader("Content-Disposition", "attachment; filename=booking_invoice_BK"+booking.getBookingId()+""+booking.getDropOffDateTime()+".pdf");
+
+
+        try (OutputStream out = res.getOutputStream()) {
+            PdfWriter writer = new PdfWriter(out);
+            PdfDocument pdf = new PdfDocument(writer);
+            Document document = new Document(pdf);
+
+            // Add Header
+            Paragraph header = new Paragraph("MegaCity Cabs Service")
+                    .setBold()
+                    .setFontSize(24)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontColor(ColorConstants.BLUE);
+            document.add(header);
+
+            Paragraph subHeader = new Paragraph("Invoice/Bill")
+                    .setFontSize(16)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontColor(ColorConstants.WHITE);
+            document.add(subHeader);
+
+            // Add Invoice Details Section
+            Paragraph invoiceDetailsHeader = new Paragraph("Booking Details")
+                    .setBold()
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setFontColor(ColorConstants.BLACK);
+            document.add(invoiceDetailsHeader);
+
+            Table invoiceDetailsTable = new Table(new float[]{2, 4});
+            invoiceDetailsTable.setWidth(UnitValue.createPercentValue(100));
+
+            // Add Invoice Details Rows
+            addRowToTable(invoiceDetailsTable, "Invoice Number:", "BK-0000"+booking.getBookingId());
+            addRowToTable(invoiceDetailsTable, "Date:", booking.getDropOffDateTime());
+            addRowToTable(invoiceDetailsTable, "Distance:", String.format("%.2f", booking.getDistanceKm())+" KM");
+            addRowToTable(invoiceDetailsTable, "Base Fare:", String.format("%.2f", booking.getBaseFare())+" LKR");
+            addRowToTable(invoiceDetailsTable, "Price Per Km:", String.format("%.2f", booking.getPricePerKm())+" LKR");
+            addRowToTable(invoiceDetailsTable, "Ride Cost:", String.format("%.2f", (booking.getTotalPrice()+booking.getDiscountPrice()))+" LKR");
+            addRowToTable(invoiceDetailsTable, "Discount(5%):", String.format("%.2f", booking.getDiscountPrice())+" LKR");
+            addRowToTable(invoiceDetailsTable, "Total Amount:", String.format("%.2f", booking.getTotalPrice())+" LKR");
+
+            document.add(invoiceDetailsTable);
+
+            // Add Billing Information Section
+            Paragraph billingInfoHeader = new Paragraph("Payment Information")
+                    .setBold()
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setFontColor(ColorConstants.BLACK);
+            document.add(billingInfoHeader);
+
+            Table billingInfoTable = new Table(new float[]{2, 4});
+            billingInfoTable.setWidth(UnitValue.createPercentValue(100));
+
+            // Add Billing Information Rows
+            addRowToTable(billingInfoTable, "Name:", customer.getFirstName());
+            addRowToTable(billingInfoTable, "Email:", customer.getEmail());
+            addRowToTable(billingInfoTable, "Address:", customer.getAddress());
+            addRowToTable(billingInfoTable, "Paid Amount:", String.format("%.2f", booking.getTotalPrice())+" LKR");
+            addRowToTable(billingInfoTable, "Payment Method:", booking.getPaymentMethod().toUpperCase());
+            addRowToTable(billingInfoTable, "Payment Status:", booking.getPaymentStatus().toUpperCase());
+
+            document.add(billingInfoTable);
+
+            // Add Footer
+            Paragraph footer = new Paragraph("Thank you for choosing our services. If you have any questions, please contact us at megacity.cabs.sys@gmail.com")
+                    .setFontSize(14)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setFontColor(ColorConstants.DARK_GRAY);
+            document.add(footer);
+
+            document.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.reset();
+            res.setContentType("text/plain");
+            res.getWriter().write("Error generating PDF: " + e.getMessage());
+        }
+    }
+
+    // Helper method to add rows to a table
+    private void addRowToTable(Table table, String label, String value) {
+        table.addCell(new Cell().add(new Paragraph(label).setBold()));
+        table.addCell(new Cell().add(new Paragraph(value)));
     }
     private void downloadExcel(HttpServletRequest req, HttpServletResponse res) throws IOException {
         res.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

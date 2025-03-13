@@ -35,7 +35,7 @@ public class SendEmail {
             message.setFrom(new InternetAddress(userEmail));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(mail));
             message.setSubject(subject);
-            message.setText(body);
+            message.setContent(body, "text/html");
             Transport.send(message);
             System.out.println("Email has been sent successfully!");
 

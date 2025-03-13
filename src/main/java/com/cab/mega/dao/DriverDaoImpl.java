@@ -60,6 +60,36 @@ public class DriverDaoImpl implements DriverDao{
         return drivers;
     }
 
+    public Driver getDriverByUserId(int userId) {
+        Driver driver = null;
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "SELECT u.*,d.driver_id,d.license_number,d.driving_experience,d.availability_status FROM user as u join driver as d on u.user_id = d.user_id where d.user_id=?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                driver = new Driver(
+                        resultSet.getInt("user_id"),
+                        resultSet.getInt("driver_id"),
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("nic"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("phone"),
+                        resultSet.getString("gender"),
+                        resultSet.getInt("role_id"),
+                        resultSet.getString("license_number"),
+                        resultSet.getInt("driving_experience"),
+                        resultSet.getString("availability_status")
+                );
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return driver;
+    }
     @Override
     public Driver getDriverById(int driverId) {
         Driver driver = null;
@@ -126,8 +156,19 @@ public class DriverDaoImpl implements DriverDao{
     }
 
     @Override
-    public boolean updateDriver(Driver driver) {
-        return true;
+    public boolean updateDriverInfo(Driver driver, int id) {
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "UPDATE driver set license_number=?, driving_experience =? where user_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setString(1,driver.getLicenseNumber());
+            statement.setInt(2,driver.getDrivingExperience());
+            statement.setInt(3,id);
+            statement.executeUpdate();
+            return true;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

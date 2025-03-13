@@ -62,9 +62,11 @@ const customers = <%= new Gson().toJson(request.getAttribute("customers")) %>;
                    "<td>" + customer.address + "</td>" +
                    "<td>" + customer.gender + "</td>" +
                    "<td><span class='badge text-bg-success'>" + customer.membershipStatus + "</span></td>" +
-                   "<td>" + "<button class='btn btn-sm btn-outline-primary me-2 update-btn' data-id='" +customer.userId+ "'>" +
-                            "<i class='fa-solid fa-pencil'></i>" +
-                            "</button>" +
+                   "<td>" + "<a href='${pageContext.request.contextPath}/admin?action=customers/update&id=" + customer.userId + "'>" +
+                                                 "<button class='btn btn-sm btn-outline-primary me-2'>" +
+                                                     "<i class='fa-solid fa-pencil'></i>" +
+                                                 "</button>" +
+                                             "</a>" +
                             "<button class='btn btn-sm btn-outline-danger delete-btn' data-id='" +customer.userId+ "'>" +
                             "<i class='fa-regular fa-trash-can'></i>" +
                             "</button>" +
@@ -92,7 +94,7 @@ const customers = <%= new Gson().toJson(request.getAttribute("customers")) %>;
                                    type: "POST",
                                    data: { id: userId },
                                    success: function(response) {
-                                       if (response.success) {
+                                       if (response.isSuccess) {
                                            row.fadeOut(300, function() {
                                                $(this).remove();
                                            });
@@ -131,6 +133,6 @@ const customers = <%= new Gson().toJson(request.getAttribute("customers")) %>;
                        });
                    });
                });
-    </script>
+</script>
 </body>
 </html>

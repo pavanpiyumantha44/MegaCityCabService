@@ -5,18 +5,19 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb my-5">
     <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Customer</li>
+    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=drivers/list"><i class="fa-solid fa-person"></i> Drivers</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit Driver</li>
   </ol>
 </nav>
-<form id="newCustomerForm">
+<form id="newDriverForm">
     <input type="hidden" name="action" value="add" />
-    <input type="hidden" name="user-type" value="customer" />
+    <input type="hidden" name="user-type" value="driver" />
     <input type="hidden" name="role_id" value="4" />
 
     <div class="mt-5">
         <div class="border-bottom pb-4">
-            <h2 class="h5 fw-semibold text-dark">Customer Information</h2>
-            <p class="mt-1 text-muted small">Add a new user to the system. Make sure to enter all the necessary details!</p>
+            <h2 class="h5 fw-semibold text-dark">Driver Information</h2>
+            <p class="mt-1 text-muted small">Update the driver. Make sure to enter all the necessary details!</p>
 
             <div id="validation" class="mt-3"></div>
 
@@ -47,34 +48,25 @@
                     <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number" required>
                 </div>
 
-                <!-- Email -->
+                <!-- License Number -->
                 <div class="col-md-6">
-                    <label for="email" class="form-label fw-medium">Email address</label>
-                    <input type="email" name="email" id="email" autocomplete="email"
-                        class="form-control" placeholder="Enter email address" required>
+                    <label for="license_number" class="form-label fw-medium">License Number</label>
+                    <input type="text" name="license_number" id="license_number" autocomplete="license_number"
+                    class="form-control" placeholder="Enter License Number" required>
                 </div>
 
-                <!-- Password -->
-                <div class="col-md-6">
-                    <label for="password" class="form-label fw-medium">Password</label>
-                    <input type="password" name="password" id="password" autocomplete="new-password"
-                        class="form-control" placeholder="Enter password" required>
-                </div>
-
+                <!-- Driving Experience -->
+               <div class="col-md-6">
+                   <label for="driving_experience" class="form-label fw-medium">Driving Experience</label>
+                   <input type="number" name="driving_experience" id="driving_experience" autocomplete="driving_experience" min="0"
+                   class="form-control" placeholder="Enter No Of Years" required>
+               </div>
                 <!-- Gender -->
                 <div class="col-md-6">
                     <label for="gender" class="form-label fw-medium">Gender</label>
                     <select id="gender" name="gender" class="form-select">
                         <option value="M">Male</option>
                         <option value="F">Female</option>
-                    </select>
-                </div>
-
-                <!-- Membership Status -->
-                <div class="col-md-6">
-                    <label for="membership" class="form-label fw-medium">Membership Status</label>
-                    <select id="membership" name="membership" class="form-select">
-                        <option value="regular" selected>Regular</option>
                     </select>
                 </div>
             </div>
@@ -84,12 +76,23 @@
     <!-- Form Buttons -->
     <div class="mt-5 d-flex justify-content-end gap-3">
         <button type="button" class="btn btn-outline-secondary">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Update</button>
     </div>
 </form>
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
 <script>
+const driver = <%= new Gson().toJson(request.getAttribute("driver")) %>;
+   console.log(driver);
+   $("li.breadcrumb-item.active").text("Edit Driver #"+driver.driverId);
+   $("#first_name").val(driver.firstName);
+   $("#last_name").val(driver.lastName);
+   $("#nic").val(driver.nic);
+   $("#phone").val(driver.phone);
+   $("#gender").val(driver.gender);
+   $("#license_number").val(driver.licenseNumber);
+   $("#driving_experience").val(driver.drivingExperience);
+
   $(document).ready(function() {
     // Form submission
     $("form").on("submit", function(e) {
@@ -129,26 +132,6 @@
         isValid = false;
       }
 
-      // Validate Email
-      var email = $("#email").val();
-      var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-      if(email === "") {
-        errorMessage += "Email is required.<br>";
-
-        isValid = false;
-      } else if (!emailPattern.test(email)) {
-        errorMessage += "Please enter a valid email address.<br>";
-
-        isValid = false;
-      }
-
-      // Validate Password
-      var password = $("#password").val();
-      if(password === "") {
-        errorMessage += "Password is required.<br>";
-        isValid = false;
-      }
-
       // If validation fails, display errors in the custom alert box
       function validationMessage(errorMessage)
       {
@@ -170,12 +153,11 @@
       if(isValid){
           $.ajax({
             type: "POST",
-            url: "${pageContext.request.contextPath}/admin?action=customers/add",
+            url: "${pageContext.request.contextPath}/admin?action=drivers/update&id="+driver.userId,
             data: $(this).serialize(),
             success: function(response) {
               console.log(response);
               if(response.isSuccess){
-                $("#newCustomerForm")[0].reset();
                 Toastify({
                      text: response.message,
                      duration: 3000,
@@ -204,7 +186,7 @@
                   close: true,
                   gravity: "top",
                   position: "center",
-                  backgroundColor: "green",
+                  backgroundColor: "red",
               }).showToast();
             }
           });

@@ -91,6 +91,22 @@ public class CustomerDaoImpl implements CustomerDao{
     }
 
     @Override
+    public boolean updateCustomer(Customer customer, int id) {
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "UPDATE customer SET address=?, membership_status=? where user_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);;
+            statement.setString(1,customer.getAddress());
+            statement.setString(2,customer.getMembershipStatus());
+            statement.setInt(3,id);
+            statement.executeUpdate();
+            return true;
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public boolean deleteCustomer(int id) {
         Connection connection = DBConnectionFactory.getConnection();
         String query = "DELETE FROM user where user_id=?";
