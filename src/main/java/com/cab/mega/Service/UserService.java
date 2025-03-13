@@ -117,6 +117,15 @@ public class UserService {
     public Driver getDriver(int driverId){
         return driverDao.getDriverById(driverId);
     }
+    public int getDriverId(int userId){
+        return driverDao.getDriverId(userId);
+    }
+    public int getDriverRideCount(int id){
+        return driverDao.getRideCount(id);
+    }
+    public double getDriverEarning(int id){
+        return driverDao.driversEarning(id);
+    }
     public CommonResponseModel addDriver(User user, Driver driver) throws SQLException {
         Connection connection = null;
         String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";

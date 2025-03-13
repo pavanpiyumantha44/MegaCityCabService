@@ -93,6 +93,39 @@ public class DriverDaoImpl implements DriverDao{
     }
 
     @Override
+    public int getDriverId(int userId) {
+        Driver driver=null;
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "SELECT u.*,d.driver_id,d.license_number,d.driving_experience,d.availability_status FROM user as u join driver as d on u.user_id = d.user_id where d.user_id=?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                driver = new Driver(
+                        resultSet.getInt("user_id"),
+                        resultSet.getInt("driver_id"),
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("nic"),
+                        resultSet.getString("email"),
+                        resultSet.getString("password"),
+                        resultSet.getString("phone"),
+                        resultSet.getString("gender"),
+                        resultSet.getInt("role_id"),
+                        resultSet.getString("license_number"),
+                        resultSet.getInt("driving_experience"),
+                        resultSet.getString("availability_status")
+                );
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        assert driver != null;
+        return driver.getDriverId();
+    }
+
+    @Override
     public boolean updateDriver(Driver driver) {
         return true;
     }
@@ -100,5 +133,41 @@ public class DriverDaoImpl implements DriverDao{
     @Override
     public boolean deleteDriver(int id) {
         return true;
+    }
+
+    @Override
+    public int getRideCount(int id) {
+        int rideCount = 0;
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "SELECT count(*) as ride_count from booking where driver_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                rideCount = resultSet.getInt("ride_count");
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return rideCount;
+    }
+
+    @Override
+    public double driversEarning(int id) {
+        double driversEarning = 0;
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "SELECT sum(driver_payout) as total_earning from driver_earning where driver_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()){
+                driversEarning = resultSet.getDouble("total_earning");
+            }
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return driversEarning;
     }
 }

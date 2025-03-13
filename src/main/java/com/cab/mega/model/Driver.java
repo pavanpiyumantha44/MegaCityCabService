@@ -20,6 +20,14 @@ public class Driver extends User{
         this.drivingExperience = drivingExperience;
     }
 
+    public int getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(int driverId) {
+        this.driverId = driverId;
+    }
+
     public String getLicenseNumber() {
         return licenseNumber;
     }

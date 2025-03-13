@@ -10,6 +10,7 @@ import com.cab.mega.Service.BookingService;
 import com.cab.mega.Service.UserService;
 import com.cab.mega.Service.VehicleService;
 import com.cab.mega.model.Booking;
+import com.cab.mega.model.Vehicle;
 import com.itextpdf.kernel.pdf.*;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
@@ -23,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 @WebServlet("/report/*")
 public class ReportDataController extends HttpServlet {
@@ -89,6 +91,52 @@ public class ReportDataController extends HttpServlet {
             res.reset();
             res.setContentType("text/plain");
             res.getWriter().write("Error generating PDF: " + e.getMessage());
+        }
+    }
+    private void downloadExcel(HttpServletRequest req, HttpServletResponse res) throws IOException {
+        res.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.setHeader("Content-Disposition", "attachment; filename=report.xlsx");
+
+        try (Workbook workbook = new XSSFWorkbook(); OutputStream out = res.getOutputStream()) {
+            Sheet sheet = workbook.createSheet("Report");
+
+
+            List<Vehicle> vehicles = vehicleService.getAllVehicles();
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"ID", "Name", "Email"};
+            for (int i = 0; i < headers.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                CellStyle headerStyle = workbook.createCellStyle();
+                Font font = workbook.createFont();
+                font.setBold(true);
+                headerStyle.setFont(font);
+                cell.setCellStyle(headerStyle);
+            }
+            int rowNum = 1;
+
+            for (Vehicle vehicle : vehicles) { // Corrected loop
+                Row row = sheet.createRow(rowNum++);
+
+                // Assuming Vehicle has methods like getId(), getModel(), getYear(), getPrice()
+                row.createCell(0).setCellValue(vehicle.getVehicleId());
+                row.createCell(1).setCellValue(vehicle.getModel());
+                row.createCell(2).setCellValue(vehicle.getYear());
+                row.createCell(3).setCellValue(vehicle.getNoOfSeats());
+            }
+
+            // Auto-size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // Write Excel file to response
+            workbook.write(out);
+        } catch (Exception e) {
+            e.printStackTrace();
+            res.reset();
+            res.setContentType("text/plain");
+            res.getWriter().write("Error generating Excel: " + e.getMessage());
         }
     }
 }

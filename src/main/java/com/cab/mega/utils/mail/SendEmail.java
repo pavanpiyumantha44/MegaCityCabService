@@ -15,8 +15,8 @@ public class SendEmail {
     }
 
     public void generateEmail(String mail, String subject, String body) throws MessagingException {
-        final String userEmail = "digiworks44@gmail.com";
-        final String password = "ssve pnjt bcbd qvcx";
+        final String userEmail = "megacity.cabs.sys@gmail.com";
+        final String password = "weza ydhv ppcf axwt";
 
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");
