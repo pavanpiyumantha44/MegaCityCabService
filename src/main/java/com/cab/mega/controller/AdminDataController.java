@@ -61,10 +61,16 @@ public class AdminDataController extends HttpServlet {
             showCustomers(req,res);
         }else if(action.equals("customers/add")){
             showAddCustomers(req,res);;
-        }else if(action.equals("drivers/list")){
+        }else if(action.equals("customers/update")){
+            String id = req.getParameter("id");
+            showEditCustomer(req,res,id);
+        } else if(action.equals("drivers/list")){
             showDrivers(req,res);;
         }else if(action.equals("drivers/add")){
             showAddDrivers(req,res);;
+        }else if(action.equals("drivers/update")){
+            String id = req.getParameter("id");
+            showEditDriver(req,res,id);
         }else if(action.equals("staff/list")){
             showStaff(req,res);
         }else if(action.equals("staff/add")){
@@ -84,14 +90,18 @@ public class AdminDataController extends HttpServlet {
         assert action != null;
         if (action.equals("customers/add")){
             addCustomers(req,res);
+        }else if(action.equals("customers/update")){
+            String id = req.getParameter("id");
+            updateCustomer(req,res,id);
         }else if(action.equals("customers/delete")){
             deleteUser(req,res);
-        }else if(action.equals("bookings/add")){
-            addBooking(req,res);
         }else if(action.equals("drivers/add")){
             addDrivers(req,res);
         }else if(action.equals("drivers/delete")){
             deleteUser(req,res);
+        }else if(action.equals("drivers/update")){
+            String id = req.getParameter("id");
+            updateDriver(req,res,id);
         }else if(action.equals("staff/add")){
             addStaff(req,res);
         }else if(action.equals("staff/delete")){
@@ -158,6 +168,19 @@ public class AdminDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
         }
     }
+    private void showEditCustomer(HttpServletRequest req, HttpServletResponse res, String id) throws IOException {
+        try {
+            HttpSession session = req.getSession();
+            int roleId = (int) session.getAttribute("role_id");
+            if (roleId == 1) {
+                Customer customer = userService.getCustomer(Integer.parseInt(id));
+                req.setAttribute("customer", customer);
+                req.getRequestDispatcher("/WEB-INF/view/user/admin/customer/a_updateCustomer.jsp").forward(req, res);
+            }
+        }catch (Exception e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
+    }
     private void addCustomers(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException{
         try {
             HttpSession session = req.getSession();
@@ -181,6 +204,36 @@ public class AdminDataController extends HttpServlet {
                 CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
                 Customer customerData = new Gson().fromJson(getDataMapper().mapData(req), Customer.class);
                 response = userService.addCustomer(user,customer);
+                res.setContentType("application/json");
+                res.getWriter().write(new Gson().toJson(response));
+            }catch (Exception e){
+                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+                e.printStackTrace();
+            }
+        }catch (NullPointerException e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
+    }
+    private void updateCustomer(HttpServletRequest req, HttpServletResponse res, String id) throws IOException, ServletException{
+        try {
+            HttpSession session = req.getSession();
+            int roleId = (int) session.getAttribute("role_id");
+            if (roleId!= 1) {
+                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
+                return;
+            }
+            String firstName = req.getParameter("first_name");
+            String lastName = req.getParameter("last_name");
+            String nic = req.getParameter("nic");
+            String phone = req.getParameter("phone");
+            String gender = req.getParameter("gender");
+            String address = req.getParameter("address");
+            String membershipStatus = req.getParameter("membership");
+            User user = new User(firstName,lastName,nic,"","",phone,gender,4);
+            Customer customer = new Customer(address,membershipStatus);
+            try {
+                CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
+                response = userService.updateCustomer(user,customer,Integer.parseInt(id));
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(response));
             }catch (Exception e){
@@ -219,6 +272,19 @@ public class AdminDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
         }
     }
+    private void showEditDriver(HttpServletRequest req, HttpServletResponse res, String id) throws IOException {
+        try {
+            HttpSession session = req.getSession();
+            int roleId = (int) session.getAttribute("role_id");
+            if (roleId == 1) {
+                Driver driver = userService.getDriverByUserId(Integer.parseInt(id));
+                req.setAttribute("driver", driver);
+                req.getRequestDispatcher("/WEB-INF/view/user/admin/driver/a_updateDriver.jsp").forward(req, res);
+            }
+        }catch (Exception e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
+    }
     private void addDrivers(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException{
         try {
             HttpSession session = req.getSession();
@@ -242,6 +308,35 @@ public class AdminDataController extends HttpServlet {
                 CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
                 Driver driverData = new Gson().fromJson(getDataMapper().mapData(req), Driver.class);
                 response = userService.addDriver(user,driver);
+                res.setContentType("application/json");
+                res.getWriter().write(new Gson().toJson(response));
+            }catch (Exception e){
+                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+                e.printStackTrace();
+            }
+        }catch (NullPointerException e){
+            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
+        }
+    }
+    private void updateDriver( HttpServletRequest req, HttpServletResponse res, String id) throws IOException, ServletException{
+        try {
+            HttpSession session = req.getSession();
+            int roleId = (int) session.getAttribute("role_id");
+            if (roleId!= 1) {
+                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
+                return;
+            }
+            String firstName = req.getParameter("first_name");
+            String lastName = req.getParameter("last_name");
+            String nic = req.getParameter("nic");
+            String licenseNumber = req.getParameter("license_number");
+            String phone = req.getParameter("phone");
+            String gender = req.getParameter("gender");
+            String drivingExperience = req.getParameter("driving_experience");
+            User user = new User(firstName,lastName,nic,"","",phone,gender,3);
+            Driver driver = new Driver(licenseNumber,Integer.parseInt(drivingExperience));
+            try {
+                CommonResponseModel response = userService.updateDriver(user,driver,Integer.parseInt(id));
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(response));
             }catch (Exception e){
@@ -395,56 +490,12 @@ public class AdminDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
         }
     }
-    private void addBooking(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        try {
-            HttpSession session = req.getSession();
-            int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 1) {
-                res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
-                return;
-            }
-            String userId = req.getParameter("user_id");
-            String vehicleId = req.getParameter("vehicle_id");
-
-            String startDate = req.getParameter("start_date");
-            String endDate = req.getParameter("end_date");
-            int noOfDays = Integer.parseInt(req.getParameter("no_of_days"));
-            String pricePerDay = req.getParameter("price_per_day");
-            String isLicenseVerified = req.getParameter("is_license_verified");
-            String isUtilityBillVerified = req.getParameter("is_utility_bill_verified");
-            String startMeterReading = req.getParameter("current_meter_reading");
-            int endMeterReading = 0;
-            double totalPrice = Double.parseDouble(req.getParameter("total_price"));
-            String bookingStatus = "pending";
-
-            //System.out.println(userId+" "+vehicleId+" "+startDate+" "+" "+endDate+" "+noOfDays+" "+pricePerDay+" "+isLicenseVerified+" "+isUtilityBillVerified+" "+startMeterReading+" "+endMeterReading+" "+totalPrice);
-
-            //Booking booking = new Booking(Integer.parseInt(userId),Integer.parseInt(vehicleId),startDate,endDate,noOfDays,isLicenseVerified,isUtilityBillVerified,Integer.parseInt(startMeterReading),endMeterReading,totalPrice,bookingStatus);
-
-            try {
-                CommonResponseModel response = new CommonResponseModel("Something went wrong!",false,null);
-                Booking bookingData = new Gson().fromJson(getDataMapper().mapData(req), Booking.class);
-                //response = bookingService.addBooking(booking);
-                res.setContentType("application/json");
-                res.getWriter().write(new Gson().toJson(response));
-            } catch (TextFormat.ParseException e){
-                e.printStackTrace();
-            } catch (Exception e){
-                res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-                e.printStackTrace();
-            }
-        }catch (NullPointerException e){
-            res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-        }
-    }
     private void deleteUser(HttpServletRequest req, HttpServletResponse res){
         try{
             int userId = Integer.parseInt(req.getParameter("id"));
-
-            //boolean isDeleted = userService.deleteCustomer(userId); // Implement this in your service
-
+            CommonResponseModel response = userService.deleteUser(userId);
             res.setContentType("application/json");
-            res.getWriter().write(new Gson().toJson(Collections.singletonMap("success", true)));
+            res.getWriter().write(new Gson().toJson(response));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

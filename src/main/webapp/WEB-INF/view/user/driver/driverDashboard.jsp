@@ -137,7 +137,8 @@ $(document).ready(function() {
     const rideCount = <%= new Gson().toJson(request.getAttribute("rideCount")) %>;
     const totalEarning = <%= new Gson().toJson(request.getAttribute("totalEarning")) %>;
     $("#totalRides").text(rideCount);
-    $("#earning").append(totalEarning);
+    const totalEarned = totalEarning.toFixed(2);
+    $("#earning").append(totalEarned);
     const tableBody = $('#cusTbl tbody');
 
     function renderTable() {

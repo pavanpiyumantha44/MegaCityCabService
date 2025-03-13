@@ -237,8 +237,8 @@
                                 <label for="status" class="form-label fw-medium">Booking Status</label>
                                 <select id="status" name="status" class="form-select">
                                     <option value="pending">Pending</option>
-                                    <option value="assigned">Assigned</option>
-                                    <option value="closed">Closed</option>
+                                    <option value="assigned">Assign</option>
+                                    <option value="rejected">Reject</option>
                                 </select>
                         </div>
                     </div>
@@ -275,7 +275,7 @@
     <!-- Form Buttons -->
     <div class="mt-5 d-flex justify-content-end gap-3">
         <button type="button" class="btn btn-outline-secondary">Cancel</button>
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="submit" class="btn btn-primary">Update</button>
     </div>
 </form>
 <div class="modal fade" id="customerSearchModal" tabindex="-1" aria-labelledby="customerSearchModalLabel" aria-hidden="true">

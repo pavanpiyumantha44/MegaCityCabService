@@ -5,7 +5,8 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb my-5">
     <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Customer</li>
+    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=customers/list"><i class="fa-solid fa-person"></i> Customers</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Update Customer</li>
   </ol>
 </nav>
 <form id="newCustomerForm">
@@ -47,20 +48,6 @@
                     <input type="text" name="phone" id="phone" class="form-control" placeholder="Enter phone number" required>
                 </div>
 
-                <!-- Email -->
-                <div class="col-md-6">
-                    <label for="email" class="form-label fw-medium">Email address</label>
-                    <input type="email" name="email" id="email" autocomplete="email"
-                        class="form-control" placeholder="Enter email address" required>
-                </div>
-
-                <!-- Password -->
-                <div class="col-md-6">
-                    <label for="password" class="form-label fw-medium">Password</label>
-                    <input type="password" name="password" id="password" autocomplete="new-password"
-                        class="form-control" placeholder="Enter password" required>
-                </div>
-
                 <!-- Gender -->
                 <div class="col-md-6">
                     <label for="gender" class="form-label fw-medium">Gender</label>
@@ -77,6 +64,12 @@
                         <option value="regular" selected>Regular</option>
                     </select>
                 </div>
+
+                <!-- Address -->
+                <div class="col-12">
+                    <label for="address" class="form-label fw-medium">Address</label>
+                    <textarea name="address" id="address" rows="3" class="form-control" placeholder="Enter address" required></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -84,13 +77,23 @@
     <!-- Form Buttons -->
     <div class="mt-5 d-flex justify-content-end gap-3">
         <button type="button" class="btn btn-outline-secondary">Cancel</button>
-        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="submit" class="btn btn-primary">Update</button>
     </div>
 </form>
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
 <script>
   $(document).ready(function() {
+   const customer = <%= new Gson().toJson(request.getAttribute("customer")) %>;
+   console.log(customer);
+   $("li.breadcrumb-item.active").text("Edit Customer #"+customer.customerId);
+   $("#first_name").val(customer.firstName);
+   $("#last_name").val(customer.lastName);
+   $("#nic").val(customer.nic);
+   $("#phone").val(customer.phone);
+   $("#gender").val(customer.gender);
+   $("#membership_status").val(customer.membershipStatus);
+   $("#address").val(customer.address);
     // Form submission
     $("form").on("submit", function(e) {
       e.preventDefault(); // Prevent form submission to handle via AJAX
@@ -128,27 +131,6 @@
 
         isValid = false;
       }
-
-      // Validate Email
-      var email = $("#email").val();
-      var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-      if(email === "") {
-        errorMessage += "Email is required.<br>";
-
-        isValid = false;
-      } else if (!emailPattern.test(email)) {
-        errorMessage += "Please enter a valid email address.<br>";
-
-        isValid = false;
-      }
-
-      // Validate Password
-      var password = $("#password").val();
-      if(password === "") {
-        errorMessage += "Password is required.<br>";
-        isValid = false;
-      }
-
       // If validation fails, display errors in the custom alert box
       function validationMessage(errorMessage)
       {
@@ -170,12 +152,11 @@
       if(isValid){
           $.ajax({
             type: "POST",
-            url: "${pageContext.request.contextPath}/admin?action=customers/add",
+            url: "${pageContext.request.contextPath}/admin?action=customers/update&id="+customer.userId,
             data: $(this).serialize(),
             success: function(response) {
               console.log(response);
               if(response.isSuccess){
-                $("#newCustomerForm")[0].reset();
                 Toastify({
                      text: response.message,
                      duration: 3000,

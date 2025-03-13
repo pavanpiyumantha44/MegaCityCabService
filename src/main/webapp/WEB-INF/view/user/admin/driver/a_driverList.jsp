@@ -62,9 +62,11 @@ const drivers = <%= new Gson().toJson(request.getAttribute("drivers")) %>;
                    "<td>" + driver.licenseNumber + "</td>" +
                    "<td>" + driver.gender + "</td>" +
                    "<td>" + driver.drivingExperience + " Y</td>" +
-                   "<td>" + "<button class='btn btn-sm btn-outline-primary me-2 update-btn' data-id='" +driver.userId+ "'>" +
-                            "<i class='fa-solid fa-pencil'></i>" +
-                            "</button>" +
+                   "<td>" + "<a href='${pageContext.request.contextPath}/admin?action=drivers/update&id=" + driver.userId + "'>" +
+                                                                             "<button class='btn btn-sm btn-outline-primary me-2'>" +
+                                                                                 "<i class='fa-solid fa-pencil'></i>" +
+                                                                             "</button>" +
+                                                                         "</a>" +
                             "<button class='btn btn-sm btn-outline-danger delete-btn' data-id='" +driver.userId+ "'>" +
                             "<i class='fa-regular fa-trash-can'></i>" +
                             "</button>" +
@@ -92,7 +94,7 @@ const drivers = <%= new Gson().toJson(request.getAttribute("drivers")) %>;
                                    type: "POST",
                                    data: { id: userId },
                                    success: function(response) {
-                                       if (response.success) {
+                                       if (response.isSuccess) {
                                            row.fadeOut(300, function() {
                                                $(this).remove();
                                            });

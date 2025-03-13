@@ -119,12 +119,9 @@ public class BookingDataController extends HttpServlet {
                     req.setAttribute("vehicles",vehicles);
                     req.setAttribute("drivers",drivers);
                     SendEmail email = SendEmail.getEmailSender();
-                    email.generateEmail("pavanpiyumantha222@gmail.com","Test Email","Test Message");
                     req.getRequestDispatcher("/WEB-INF/view/user/admin/booking/a_addNewBooking.jsp").forward(req, res);
                 }catch (NullPointerException | SQLException e){
                     res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-                } catch (MessagingException e) {
-                    throw new RuntimeException(e);
                 }
             }else if(roleId == 2){
                 req.getRequestDispatcher("/WEB-INF/view/user/admin/dashboard.jsp").forward(req, res);
@@ -213,10 +210,15 @@ public class BookingDataController extends HttpServlet {
                     response = bookingService.addBooking(booking);
                     res.setContentType("application/json");
                     res.getWriter().write(new Gson().toJson(response));
+                    if(response.isSuccess()) {
+                        sendBookingCreatedEmail(Integer.parseInt(customerId));
+                    }
                 } catch (NullPointerException e) {
                     CommonResponseModel response = new CommonResponseModel("Something went wrong!", false, null);
                     res.setContentType("application/json");
                     res.getWriter().write(new Gson().toJson(response));
+                } catch (MessagingException e) {
+                    throw new RuntimeException(e);
                 }
             } else if (roleId == 2) {
                 req.getRequestDispatcher("/WEB-INF/view/user/admin/dashboard.jsp").forward(req, res);
@@ -426,10 +428,14 @@ public class BookingDataController extends HttpServlet {
                 CommonResponseModel updateResponse = bookingService.updateRideClosed(updatingClosedBooking);
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(updateResponse));
+                Booking booking = bookingService.getBooking(Integer.parseInt(id));
+                sendBookingCompletedEmail(booking);
             } catch (NullPointerException e) {
                 CommonResponseModel response = new CommonResponseModel("Something went wrong!", false, null);
                 res.setContentType("application/json");
                 res.getWriter().write(new Gson().toJson(response));
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
             }
         }
     }
@@ -437,4 +443,104 @@ public class BookingDataController extends HttpServlet {
         double rideCost = baseFare+(pricePerKm*distanceKm);
         return rideCost;
     }
+    private void sendBookingCompletedEmail(Booking booking) throws MessagingException {
+        Customer customer = userService.getCustomer(booking.getCustomerId());
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("<html>\n")
+                .append("<body style=\"font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0;\">\n")
+                .append("    <table align=\"center\" width=\"600\" style=\"background-color: #ffffff; border-collapse: collapse; margin: 20px auto; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);\">\n")
+                .append("        <tr>\n")
+                .append("            <td style=\"padding: 20px; text-align: center; background-color: #233143; color: #ffffff;\">\n")
+                .append("                <h1 style=\"margin: 0; font-size: 24px; color: #FFC001\">MegaCity Cabs</h1>\n")
+                .append("                <p style=\"margin: 5px 0 0; font-size: 16px;color: #EEF1F4;\">Invoice/Bill</p>\n")
+                .append("            </td>\n")
+                .append("        </tr>\n")
+                .append("        <tr>\n")
+                .append("            <td style=\"padding: 20px;\">\n")
+                .append("                <h2 style=\"font-size: 20px; color: #333333; margin-bottom: 10px;\">Invoice Details</h2>\n")
+                .append("                <table width=\"100%\" style=\"border-collapse: collapse;\">\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Booking Number:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">BK-0000"+booking.getBookingId()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Date:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+booking.getDropOffDateTime()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Distance:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", booking.getDistanceKm())+" KM"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Base Fare:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", booking.getBaseFare())+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Price Per KM:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", booking.getPricePerKm())+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Ride Cost:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", (booking.getTotalPrice()+booking.getDiscountPrice()))+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Discount (5%) :</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", booking.getDiscountPrice())+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Total Amount:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", booking.getTotalPrice())+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                </table>\n")
+                .append("            </td>\n")
+                .append("        </tr>\n")
+                .append("        <tr>\n")
+                .append("            <td style=\"padding: 20px;\">\n")
+                .append("                <h2 style=\"font-size: 20px; color: #333333; margin-bottom: 10px;\">Billing Information</h2>\n")
+                .append("                <table width=\"100%\" style=\"border-collapse: collapse;\">\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Name:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+customer.getFirstName()+" "+customer.getLastName()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Email:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+customer.getEmail()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Address:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+customer.getAddress()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Paid Amount:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+String.format("%.2f", Math.ceil(booking.getTotalPrice()))+" LKR"+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Payment Method:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+booking.getPaymentMethod()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                    <tr>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\"><strong>Payment Status:</strong></td>\n")
+                .append("                        <td style=\"padding: 8px; border: 1px solid #dddddd; font-size: 14px; color: #555555;\">"+booking.getPaymentStatus()+"</td>\n")
+                .append("                    </tr>\n")
+                .append("                </table>\n")
+                .append("            </td>\n")
+                .append("        </tr>\n")
+                .append("        <tr>\n")
+                .append("            <td style=\"padding: 20px; text-align: center; background-color: #f8f9fa; color: #555555;\">\n")
+                .append("                <p style=\"margin: 0; font-size: 14px;\">Thank you for choosing our services. If you have any inqueries, please contact us at <a href=\"mailto:megacity.cabs.sys@gmail.com\" style=\"color: #007bff; text-decoration: none;\">megacity.cabs.sys@gmail.com</a>.</p>\n")
+                .append("            </td>\n")
+                .append("        </tr>\n")
+                .append("    </table>\n")
+                .append("</body>\n")
+                .append("</html>");
+
+        String message = messageBuilder.toString();
+
+        SendEmail email = SendEmail.getEmailSender();
+        email.generateEmail(customer.getEmail(),"New Booking",message);
+    }
+    private void sendBookingCreatedEmail(int customerId) throws MessagingException{
+        return;
+    }
+
 }
