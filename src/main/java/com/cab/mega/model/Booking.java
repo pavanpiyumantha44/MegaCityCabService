@@ -85,6 +85,26 @@ public class Booking {
         this.paymentStatus = paymentStatus;
     }
 
+    public Booking(int bookingId,String status) {
+        this.bookingId = bookingId;
+        this.status = status;
+    }
+    public Booking(int bookingId,double distanceKm, double endMeterReading, String dropOffDttm, double discountPrice, double totalPrice, String status) {
+        this.bookingId = bookingId;
+        this.distanceKm = distanceKm;
+        this.endMeterReading = endMeterReading;
+        this.dropOffDateTime = dropOffDttm;
+        this.discountPrice = discountPrice;
+        this.totalPrice = totalPrice;
+        this.status = status;
+    }
+    public Booking(int bookingId,String paymentMethod, String paymentStatus, String status) {
+        this.bookingId = bookingId;
+        this.paymentMethod=paymentMethod;
+        this.paymentStatus = paymentStatus;
+        this.status = status;
+    }
+
     public int getBookingId() {
         return bookingId;
     }

@@ -1,21 +1,89 @@
+<%@include file="/WEB-INF/view/layout/driver/header.jsp" %>
 <%@ page import="com.google.gson.Gson" %>
-<%@include file="/WEB-INF/view/layout/admin/header.jsp" %>
-<!-- Content Area -->
-<div>
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb my-5">
-    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Available Bookings</li>
-  </ol>
-</nav>
-<div class="card border-0 shadow-md mt-5">
+<style>
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .card-body {
+      padding: 20px;
+    }
+    .form-label {
+      font-weight: bold;
+    }
+    .btn-primary {
+      background-color: #474fa0;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+  </style>
+<div class="my-3">
+    <h4>Welcome <%= session.getAttribute("first_name") %></h4>
+</div>
+<div class="container-fluid">
+<div class="row">
+    <div class="col-12 col-md-6 d-flex">
+         <div class="card flex-fill border-0">
+                <div class="card-body py-4">
+                      <div class="row">
+                          <div class="col-6">
+                              <div class="d-flex justify-content-end">
+                                   <h4 class="mt-1">
+                                        <i class="fa-solid fa-taxi text-primary"></i>
+                                   </h4>
+                              </div>
+                          </div>
+                          <div class="col-6">
+                              <div>
+                                   <h2 id="totalRides">0</h2>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <p class="mb-2 text-center">
+                              Total Rides
+                          </p>
+                      </div>
+                </div>
+         </div>
+    </div>
+    <div class="col-12 col-md-6 d-flex">
+    <div class="card flex-fill border-0">
+         <div class="card-body py-4">
+               <div class="d-flex align-items-start justify-content-center">
+                    <div class="flex-grow-1 text-center">
+                          <h4 class="mb-2">
+                          <i class="fa-solid fa-money-bill-wave text-success"></i>
+                              <span id="earning"><span>
+                              <span class="text-success">LKR</span>
+                          </h4>
+                          <p class="mb-2">
+                              Total Earnings
+                          </p>
+                          <div class="mb-0">
+                             <span class="badge text-success me-2">
+                                 +9.0%
+                             </span>
+                             <span class="text-muted">
+                                 Since Last Month
+                             </span>
+                          </div>
+                    </div>
+               </div>
+         </div>
+    </div>
+    </div>
+    </div>
+</div>
+<div class="container-fluid mt-5">
+<p class="text-success">Available Rides</p>
+<div class="card border-0 shadow-md ">
     <div class="card-header">
         <div class="row">
-            <div class="col-lg-7 col-sm-6">
-            </div>
-            <div class="col-lg-3 col-sm-6 d-flex">
-                <a href="${pageContext.request.contextPath}/booking?action=download/excel" class="btn btn-success me-2">Download Excel <i class="fa-solid fa-file-excel"></i></a>
-                 <a href="${pageContext.request.contextPath}/booking?action=download/pdf" class="btn btn-warning">Download PDF <i class="fa-solid fa-file-pdf"></i></a>
+            <div class="col-lg-10 col-sm-6">
             </div>
             <div class="col-lg-2 col-sm-6">
                 <input type="text" class="form-control" placeholder="Search..." style="outline: none;" onfocus="this.style.outline='none';">
@@ -30,9 +98,8 @@
                         <th scope="col">Booking ID</th>
                         <th scope="col">Pickup Location</th>
                         <th scope="col">Destination</th>
-                        <th scope="col">Booking Date Time</th>
+                        <th scope="col">Pickup Date Time</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,14 +126,19 @@
             </nav>
         </div>
     </div>
-</div>
+   </div>
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
 <script type="module">
-const bookings = <%= new Gson().toJson(request.getAttribute("bookings")) %>;
+const bookings = <%= new Gson().toJson(request.getAttribute("rides")) %>;
 console.log(bookings);
 
 $(document).ready(function() {
+    const rideCount = <%= new Gson().toJson(request.getAttribute("rideCount")) %>;
+    const totalEarning = <%= new Gson().toJson(request.getAttribute("totalEarning")) %>;
+    $("#totalRides").text(rideCount);
+    const totalEarned = totalEarning.toFixed(2);
+    $("#earning").append(totalEarned);
     const tableBody = $('#cusTbl tbody');
 
     function renderTable() {
@@ -77,7 +149,7 @@ $(document).ready(function() {
                        "<td> <a href='${pageContext.request.contextPath}/booking?action=edit&id=" + booking.bookingId + "'>BK"+booking.bookingId+"</a></td>" +
                        "<td>" + booking.pickupLocation + "</td>" +
                        "<td>" + booking.destination + "</td>" +
-                       "<td>" + booking.bookingDateTime + "</td>" +
+                       "<td>" + booking.pickupDateTime + "</td>" +
                        "<td>";
                            if (booking.status === "pending") {
                                row += "<span class='badge text-bg-warning'>" + booking.status + "</span>";
@@ -91,17 +163,6 @@ $(document).ready(function() {
                                row += "<span class='badge text-bg-danger'>" + booking.status + "</span>";
                            }
                            row += "</td>" +
-                       "<td>"; if(booking.status == "closed")
-                        { row+="<a href='${pageContext.request.contextPath}/report?action=pdf/booking&id=" + booking.bookingId + "'>" +
-                                "<button class='btn btn-sm btn-outline-primary me-2'>" +
-                                    "<i class='fa-solid fa-file-arrow-down'></i>" +
-                                "</button>" +
-                            "</a>"}
-                            row +=
-                           "<button class='btn btn-sm btn-outline-danger delete-btn' data-id='" + booking.bookingId + "'>" +
-                               "<i class='fa-regular fa-trash-can'></i>" +
-                           "</button>" +
-                       "</td>" +
                    "</tr>";
             tableBody.append(row);
         });

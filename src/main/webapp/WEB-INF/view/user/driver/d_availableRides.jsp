@@ -1,21 +1,17 @@
 <%@ page import="com.google.gson.Gson" %>
-<%@include file="/WEB-INF/view/layout/admin/header.jsp" %>
+<%@include file="/WEB-INF/view/layout/driver/header.jsp" %>
 <!-- Content Area -->
 <div>
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb my-5">
-    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/admin?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Available Bookings</li>
+    <li class="breadcrumb-item"><a href="${pageContext.request.contextPath}/driver?action=dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Available Rides</li>
   </ol>
 </nav>
 <div class="card border-0 shadow-md mt-5">
     <div class="card-header">
         <div class="row">
-            <div class="col-lg-7 col-sm-6">
-            </div>
-            <div class="col-lg-3 col-sm-6 d-flex">
-                <a href="${pageContext.request.contextPath}/booking?action=download/excel" class="btn btn-success me-2">Download Excel <i class="fa-solid fa-file-excel"></i></a>
-                 <a href="${pageContext.request.contextPath}/booking?action=download/pdf" class="btn btn-warning">Download PDF <i class="fa-solid fa-file-pdf"></i></a>
+            <div class="col-lg-10 col-sm-6">
             </div>
             <div class="col-lg-2 col-sm-6">
                 <input type="text" class="form-control" placeholder="Search..." style="outline: none;" onfocus="this.style.outline='none';">
@@ -30,9 +26,8 @@
                         <th scope="col">Booking ID</th>
                         <th scope="col">Pickup Location</th>
                         <th scope="col">Destination</th>
-                        <th scope="col">Booking Date Time</th>
+                        <th scope="col">Pickup Date Time</th>
                         <th scope="col">Status</th>
-                        <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,7 +58,7 @@
 </div>
 <%@include file="/WEB-INF/view/layout/admin/footer.jsp" %>
 <script type="module">
-const bookings = <%= new Gson().toJson(request.getAttribute("bookings")) %>;
+const bookings = <%= new Gson().toJson(request.getAttribute("rides")) %>;
 console.log(bookings);
 
 $(document).ready(function() {
@@ -77,7 +72,7 @@ $(document).ready(function() {
                        "<td> <a href='${pageContext.request.contextPath}/booking?action=edit&id=" + booking.bookingId + "'>BK"+booking.bookingId+"</a></td>" +
                        "<td>" + booking.pickupLocation + "</td>" +
                        "<td>" + booking.destination + "</td>" +
-                       "<td>" + booking.bookingDateTime + "</td>" +
+                       "<td>" + booking.pickupDateTime + "</td>" +
                        "<td>";
                            if (booking.status === "pending") {
                                row += "<span class='badge text-bg-warning'>" + booking.status + "</span>";
@@ -91,17 +86,6 @@ $(document).ready(function() {
                                row += "<span class='badge text-bg-danger'>" + booking.status + "</span>";
                            }
                            row += "</td>" +
-                       "<td>"; if(booking.status == "closed")
-                        { row+="<a href='${pageContext.request.contextPath}/report?action=pdf/booking&id=" + booking.bookingId + "'>" +
-                                "<button class='btn btn-sm btn-outline-primary me-2'>" +
-                                    "<i class='fa-solid fa-file-arrow-down'></i>" +
-                                "</button>" +
-                            "</a>"}
-                            row +=
-                           "<button class='btn btn-sm btn-outline-danger delete-btn' data-id='" + booking.bookingId + "'>" +
-                               "<i class='fa-regular fa-trash-can'></i>" +
-                           "</button>" +
-                       "</td>" +
                    "</tr>";
             tableBody.append(row);
         });

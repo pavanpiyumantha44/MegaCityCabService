@@ -45,6 +45,42 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public boolean updateUser(User user, int id) {
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "UPDATE user set first_name=?,last_name=?,nic=?,phone=?,gender=?,role_id=? where user_id=?";
+        try{
+            PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1,user.getFirstName());
+            statement.setString(2,user.getLastName());
+            statement.setString(3,user.getNic());
+            statement.setString(4,user.getPhone());
+            statement.setString(5,user.getGender());
+            statement.setInt(6,user.getRoleId());
+            statement.setInt(7,id);
+            statement.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteUser(int id) {
+        Connection connection = DBConnectionFactory.getConnection();
+        String query = "DELETE FROM user where user_id=?";
+        try {
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            statement.executeUpdate();
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
     public List<User> getAllUsers() {
         Connection connection = DBConnectionFactory.getConnection();
         List<User> users = new ArrayList<>();

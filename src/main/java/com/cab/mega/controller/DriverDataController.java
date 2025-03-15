@@ -1,12 +1,12 @@
 package com.cab.mega.controller;
 
+import com.cab.mega.Service.BookingService;
 import com.cab.mega.Service.UserService;
 import com.cab.mega.Service.VehicleService;
 import com.cab.mega.model.*;
 import com.google.gson.Gson;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 import java.io.File;
@@ -20,15 +20,17 @@ import java.util.stream.Collectors;
 
 import static com.cab.mega.utils.datamapper.DataMapper.getDataMapper;
 
-@WebServlet("/customer/*")
+@WebServlet("/driver/*")
+public class DriverDataController extends HttpServlet {
 
-public class CustomerDataController extends HttpServlet {
     UserService userService;
     VehicleService vehicleService;
+    BookingService bookingService;
 
     public void init() throws ServletException {
         userService = UserService.getInstance();
         vehicleService = VehicleService.getInstance();
+        bookingService = BookingService.getInstance();
     }
 
     @Override
@@ -44,6 +46,7 @@ public class CustomerDataController extends HttpServlet {
             showBookings(req,res);
         }
     }
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String action = req.getParameter("action");
@@ -51,8 +54,10 @@ public class CustomerDataController extends HttpServlet {
             res.sendRedirect(req.getContextPath()+"/");
         }
         assert action != null;
-        if (action.equals("customers/delete")){
-            deleteUser(req,res);
+        if (action.equals("customers/add")){
+            //addCustomers(req,res);
+        }else if(action.equals("customers/delete")){
+            //deleteUser(req,res);
         }
     }
 
@@ -60,11 +65,19 @@ public class CustomerDataController extends HttpServlet {
         try{
             HttpSession session = req.getSession();
             int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 4) {
+            int userId = (int) session.getAttribute("user_id");
+            if (roleId!= 3) {
                 res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
                 return;
             }
-            req.getRequestDispatcher("/WEB-INF/view/user/customer/custDashboard.jsp").forward(req, res);
+            int driverId = userService.getDriverId(userId);
+            int rideCount = userService.getDriverRideCount(driverId);
+            double totalEarning = userService.getDriverEarning(driverId);
+            List<Booking> rides = bookingService.getAssignedBookingByDriverId(driverId);
+            req.setAttribute("rides",rides);
+            req.setAttribute("rideCount",rideCount);
+            req.setAttribute("totalEarning",totalEarning);
+            req.getRequestDispatcher("/WEB-INF/view/user/driver/driverDashboard.jsp").forward(req, res);
         }catch (NullPointerException e){
             res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
         }
@@ -73,26 +86,17 @@ public class CustomerDataController extends HttpServlet {
         try{
             HttpSession session = req.getSession();
             int roleId = (int) session.getAttribute("role_id");
-            if (roleId!= 4) {
+            if (roleId!= 3) {
                 res.sendRedirect(req.getContextPath() + "/login.jsp?error=unauthorized");
                 return;
             }
-            req.getRequestDispatcher("/WEB-INF/view/user/customer/booking/a_availableBookings.jsp").forward(req, res);
+            int userId = (int) session.getAttribute("user_id");
+            int driverId = userService.getDriverId(userId);
+            List<Booking> rides = bookingService.getAssignedBookingByDriverId(driverId);
+            req.setAttribute("rides",rides);
+            req.getRequestDispatcher("/WEB-INF/view/user/driver/d_availableRides.jsp").forward(req, res);
         }catch (NullPointerException e){
             res.sendRedirect(req.getContextPath()+"/login.jsp?error=unauthorized");
-        }
-
-    }
-    private void deleteUser(HttpServletRequest req, HttpServletResponse res){
-        try{
-            int userId = Integer.parseInt(req.getParameter("id"));
-
-            //boolean isDeleted = userService.deleteCustomer(userId); // Implement this in your service
-
-            res.setContentType("application/json");
-            res.getWriter().write(new Gson().toJson(Collections.singletonMap("success", true)));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }
